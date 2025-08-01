@@ -68,115 +68,127 @@ class _AuthViewState extends State<AuthView>
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
-          child: Column(
-            children: [
-              // Header with logo/title
-              Container(
-                padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 
+                          MediaQuery.of(context).padding.top - 
+                          MediaQuery.of(context).padding.bottom,
+              ),
+              child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    const SizedBox(height: 50),
-                    // Logo placeholder
-                    // Container(
-                    //   width: 100,
-                    //   height: 100,
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.blue.shade100,
-                    //     borderRadius: BorderRadius.circular(50),
-                    //   ),
-                    //   child: Icon(
-                    //     Icons.business,
-                    //     size: 50,
-                    //     color: Colors.blue.shade700,
-                    //   ),
-                    // ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Welcome Back',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade800,
+                    // Header with logo/title
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 50),
+                          // Logo placeholder
+                          // Container(
+                          //   width: 100,
+                          //   height: 100,
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.blue.shade100,
+                          //     borderRadius: BorderRadius.circular(50),
+                          //   ),
+                          //   child: Icon(
+                          //     Icons.business,
+                          //     size: 50,
+                          //     color: Colors.blue.shade700,
+                          //   ),
+                          // ),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Welcome Back',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade800,
+                            ),
+                          ),
+                          const SizedBox(height: 60),
+                          Text(
+                            'Sign in to your account',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 60),
-                    Text(
-                      'Sign in to your account',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade600,
+
+                    // Tab Bar
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: TabBar(
+                        controller: _tabController,
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          color: Colors.blue.shade600,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blue.shade200,
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        dividerColor: Colors.transparent,
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.grey.shade600,
+                        labelStyle: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        unselectedLabelStyle: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                        tabs: const [
+                          Tab(text: 'Dealer', height: 45),
+                          Tab(text: 'Transporter', height: 45),
+                        ],
+                      ),
+                    ),
+
+                    // Tab Bar View
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [_buildDealerLogin(), _buildTransporterLogin()],
+                      ),
+                    ),
+
+                    // Footer
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      child: TextButton(
+                        onPressed: () {
+                          _showContactSupport(context);
+                        },
+                        child: Text(
+                          'Contact Support',
+                          style: TextStyle(
+                            color: Colors.blue.shade600,
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-
-              // Tab Bar
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(22),
-                    color: Colors.blue.shade600,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blue.shade200,
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.grey.shade600,
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                  tabs: const [
-                    Tab(text: 'Dealer', height: 45),
-                    Tab(text: 'Transporter', height: 45),
-                  ],
-                ),
-              ),
-
-              // Tab Bar View
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [_buildDealerLogin(), _buildTransporterLogin()],
-                ),
-              ),
-
-              // Footer
-              Container(
-                padding: const EdgeInsets.all(20),
-                child: TextButton(
-                  onPressed: () {
-                    _showContactSupport(context);
-                  },
-                  child: Text(
-                    'Contact Support',
-                    style: TextStyle(
-                      color: Colors.blue.shade600,
-                      fontSize: 16,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -188,7 +200,7 @@ class _AuthViewState extends State<AuthView>
       builder: (context, state) {
         final isLoading = state is auth_bloc.AuthLoading;
 
-        return SingleChildScrollView(
+        return Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -324,7 +336,7 @@ class _AuthViewState extends State<AuthView>
       builder: (context, state) {
         final isLoading = state is auth_bloc.AuthLoading;
 
-        return SingleChildScrollView(
+        return Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

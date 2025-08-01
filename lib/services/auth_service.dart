@@ -11,7 +11,7 @@ class AuthService {
 
   Future<LoginResponse> login(LoginRequest request) async {
     try {
-      final response = await _apiService.post('/auth/login', data: request.toJson());
+      final response = await _apiService.post('/auth/Login', data: request.toJson());
       
       if (response.statusCode == 200) {
         final loginResponse = LoginResponse.fromJson(response.data);
