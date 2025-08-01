@@ -11,22 +11,25 @@ class AuthService {
 
   Future<LoginResponse> login(LoginRequest request) async {
     try {
-      final response = await _apiService.post('/auth/Login', data: request.toJson());
-      
+      final response = await _apiService.post(
+        '/auth/Login',
+        data: request.toJson(),
+      );
+
       if (response.statusCode == 200) {
         final loginResponse = LoginResponse.fromJson(response.data);
-        
+
         if (loginResponse.success && loginResponse.token != null) {
           // Store token and user data
           await _storageService.setToken(loginResponse.token!);
           if (loginResponse.user != null) {
             await _storageService.setUser(loginResponse.user!);
           }
-          
+
           // Set auth token for future requests
           _apiService.setAuthToken(loginResponse.token!);
         }
-        
+
         return loginResponse;
       } else {
         return LoginResponse.failure(
@@ -42,7 +45,10 @@ class AuthService {
 
   Future<bool> forgotPassword(ForgotPasswordRequest request) async {
     try {
-      final response = await _apiService.post('/auth/forgot-password', data: request.toJson());
+      final response = await _apiService.post(
+        '/auth/forgot-password',
+        data: request.toJson(),
+      );
       return response.statusCode == 200;
     } catch (e) {
       return false;
@@ -59,7 +65,7 @@ class AuthService {
       // Clear local storage
       await _storageService.clearToken();
       await _storageService.clearUser();
-      
+
       // Remove auth token from API service
       _apiService.removeAuthToken();
     }
@@ -84,7 +90,7 @@ class AuthService {
       if (currentToken == null) return false;
 
       final response = await _apiService.post('/auth/refresh-token');
-      
+
       if (response.statusCode == 200) {
         final newToken = response.data['token'] as String?;
         if (newToken != null) {

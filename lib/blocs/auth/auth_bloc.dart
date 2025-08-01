@@ -20,15 +20,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    
+
     try {
       await _authService.initializeAuth();
-      
+
       final isLoggedIn = await _authService.isLoggedIn();
       if (isLoggedIn) {
         final user = await _authService.getCurrentUser();
         final token = await _authService.getToken();
-        
+
         if (user != null && token != null) {
           emit(AuthAuthenticated(user: user, token: token));
         } else {
@@ -47,15 +47,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    
+
     try {
       final response = await _authService.login(event.loginRequest);
-      
+
       if (response.success && response.user != null && response.token != null) {
-        emit(AuthAuthenticated(
-          user: response.user!,
-          token: response.token!,
-        ));
+        emit(AuthAuthenticated(user: response.user!, token: response.token!));
       } else {
         emit(AuthError(response.error ?? 'Login failed'));
       }
@@ -69,7 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    
+
     try {
       await _authService.logout();
       emit(const AuthUnauthenticated());
@@ -84,23 +81,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    
+
     try {
-      final success = await _authService.forgotPassword(event.forgotPasswordRequest);
-      
+      final success = await _authService.forgotPassword(
+        event.forgotPasswordRequest,
+      );
+
       if (success) {
-        emit(const AuthForgotPasswordSuccess(
-          'Password reset instructions have been sent to your registered mobile number.',
-        ));
+        emit(
+          const AuthForgotPasswordSuccess(
+            'Password reset instructions have been sent to your registered mobile number.',
+          ),
+        );
       } else {
-        emit(const AuthForgotPasswordError(
-          'Failed to send password reset instructions. Please try again.',
-        ));
+        emit(
+          const AuthForgotPasswordError(
+            'Failed to send password reset instructions. Please try again.',
+          ),
+        );
       }
     } catch (e) {
-      emit(AuthForgotPasswordError(
-        'Failed to process forgot password request: ${e.toString()}',
-      ));
+      emit(
+        AuthForgotPasswordError(
+          'Failed to process forgot password request: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -110,7 +115,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       final success = await _authService.refreshToken();
-      
+
       if (!success) {
         // If token refresh fails, logout the user
         add(const AuthLogoutRequested());
@@ -129,13 +134,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       final isLoggedIn = await _authService.isLoggedIn();
-      
+
       if (!isLoggedIn) {
         emit(const AuthUnauthenticated());
       } else {
         final user = await _authService.getCurrentUser();
         final token = await _authService.getToken();
-        
+
         if (user != null && token != null) {
           emit(AuthAuthenticated(user: user, token: token));
         } else {

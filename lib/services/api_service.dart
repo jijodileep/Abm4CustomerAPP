@@ -7,15 +7,17 @@ class ApiService {
   final Logger _logger = Logger();
 
   ApiService() {
-    _dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
     _setupInterceptors();
   }
@@ -30,7 +32,9 @@ class ApiService {
           handler.next(options);
         },
         onResponse: (response, handler) {
-          _logger.d('Response: ${response.statusCode} ${response.requestOptions.path}');
+          _logger.d(
+            'Response: ${response.statusCode} ${response.requestOptions.path}',
+          );
           _logger.d('Data: ${response.data}');
           handler.next(response);
         },
@@ -132,18 +136,13 @@ class ApiService {
         );
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode ?? 0;
-        final message = error.response?.data?['message'] ?? 
-                       error.response?.data?['error'] ?? 
-                       'An error occurred';
-        return ApiException(
-          message: message,
-          statusCode: statusCode,
-        );
+        final message =
+            error.response?.data?['message'] ??
+            error.response?.data?['error'] ??
+            'An error occurred';
+        return ApiException(message: message, statusCode: statusCode);
       case DioExceptionType.cancel:
-        return ApiException(
-          message: 'Request was cancelled',
-          statusCode: 0,
-        );
+        return ApiException(message: 'Request was cancelled', statusCode: 0);
       case DioExceptionType.connectionError:
         return ApiException(
           message: 'No internet connection. Please check your network.',
@@ -162,10 +161,7 @@ class ApiException implements Exception {
   final String message;
   final int statusCode;
 
-  ApiException({
-    required this.message,
-    required this.statusCode,
-  });
+  ApiException({required this.message, required this.statusCode});
 
   @override
   String toString() => 'ApiException: $message (Status: $statusCode)';

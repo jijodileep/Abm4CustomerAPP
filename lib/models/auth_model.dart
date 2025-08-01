@@ -62,13 +62,8 @@ class LoginResponse extends Equatable {
     );
   }
 
-  factory LoginResponse.failure({
-    required String error,
-  }) {
-    return LoginResponse(
-      success: false,
-      error: error,
-    );
+  factory LoginResponse.failure({required String error}) {
+    return LoginResponse(success: false, error: error);
   }
 
   @override

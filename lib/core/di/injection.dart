@@ -10,11 +10,11 @@ final GetIt getIt = GetIt.instance;
 Future<void> setupDependencyInjection() async {
   // Services
   getIt.registerLazySingleton<ApiService>(() => ApiService());
-  
+
   final storageService = StorageService();
   await storageService.init();
   getIt.registerSingleton<StorageService>(storageService);
-  
+
   getIt.registerLazySingleton<AuthService>(
     () => AuthService(getIt<ApiService>(), getIt<StorageService>()),
   );
@@ -25,9 +25,7 @@ Future<void> setupDependencyInjection() async {
   );
 
   // BLoCs
-  getIt.registerFactory<AuthBloc>(
-    () => AuthBloc(getIt<AuthService>()),
-  );
+  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthService>()));
 }
 
 // Helper methods for easy access
