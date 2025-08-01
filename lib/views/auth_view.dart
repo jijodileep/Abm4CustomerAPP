@@ -160,26 +160,27 @@ class _AuthViewState extends State<AuthView>
                 ),
               ),
 
-              // Footer - Contact Support
-              SafeArea(
-                top: false,
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  child: TextButton(
-                    onPressed: () {
-                      _showContactSupport(context);
-                    },
-                    child: Text(
-                      'Contact Support',
-                      style: TextStyle(
-                        color: Colors.blue.shade600,
-                        fontSize: 16,
-                        decoration: TextDecoration.underline,
+              // Footer - Contact Support (only show when keyboard is not visible)
+              if (MediaQuery.of(context).viewInsets.bottom == 0)
+                SafeArea(
+                  top: false,
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    child: TextButton(
+                      onPressed: () {
+                        _showContactSupport(context);
+                      },
+                      child: Text(
+                        'Contact Support',
+                        style: TextStyle(
+                          color: Colors.blue.shade600,
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
