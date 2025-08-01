@@ -90,15 +90,15 @@ class User extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        mobileNumber,
-        dealerId,
-        transporterId,
-        name,
-        email,
-        userType,
-        isActive,
-        createdAt,
-        lastLoginAt,
-      ];
+    id,
+    mobileNumber,
+    dealerId,
+    transporterId,
+    name,
+    email,
+    userType,
+    isActive,
+    createdAt,
+    lastLoginAt,
+  ];
 }

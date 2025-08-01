@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/splash/splash_bloc.dart';
-import '../blocs/splash/splash_event.dart' as splash_event;
-import '../blocs/splash/splash_state.dart' as splash_state;
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_event.dart';
+import '../services/auth_service.dart';
+import '../core/di/injection.dart';
 import 'auth_view.dart';
 
 class SplashView extends StatefulWidget {
@@ -32,8 +31,44 @@ class _SplashViewState extends State<SplashView>
 
     _animationController.forward();
     
-    // Start splash process
-    context.read<SplashBloc>().add(const splash_event.SplashStarted());
+    // Navigate to auth screen after splash duration
+    _navigateToAuth();
+  }
+
+  void _navigateToAuth() async {
+    // Wait for splash duration
+    await Future.delayed(const Duration(seconds: 3));
+    
+    if (mounted) {
+      // Check authentication status
+      try {
+        final authService = getIt<AuthService>();
+        await authService.initializeAuth();
+        final isAuthenticated = await authService.isLoggedIn();
+        
+        if (isAuthenticated) {
+          // Navigate to home screen (to be implemented)
+          // For now, we'll navigate to auth screen
+          _navigateToAuthScreen();
+        } else {
+          _navigateToAuthScreen();
+        }
+      } catch (e) {
+        // If there's an error, navigate to auth screen
+        _navigateToAuthScreen();
+      }
+    }
+  }
+
+  void _navigateToAuthScreen() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => getIt<AuthBloc>()..add(const AuthInitialized()),
+          child: const AuthView(),
+        ),
+      ),
+    );
   }
 
   @override
@@ -44,101 +79,77 @@ class _SplashViewState extends State<SplashView>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SplashBloc, splash_state.SplashState>(
-      listener: (context, state) {
-        if (state is splash_state.SplashCompleted) {
-          if (state.isAuthenticated) {
-            // Navigate to home screen (to be implemented)
-            // For now, we'll navigate to auth screen
-            _navigateToAuth();
-          } else {
-            _navigateToAuth();
-          }
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Top spacing
-              const Spacer(flex: 2),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Top spacing
+            const Spacer(flex: 2),
 
-              // ABM4 Logo (centered)
-              Center(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Logo
-                      Center(child: Image.asset('assets/logo.png')),
-                      const SizedBox(height: 24),
+            // ABM4 Logo (centered)
+            Center(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Logo
+                    Center(child: Image.asset('assets/logo.png')),
+                    const SizedBox(height: 24),
 
-                      // Tagline placeholder
-                      const Text(
-                        'TBD',
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w400,
-                        ),
+                    // Tagline placeholder
+                    const Text(
+                      'TBD',
+                      style: TextStyle(
+                        fontSize: 25,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
+            ),
 
-              // Middle spacing
-              const Spacer(flex: 3),
+            // Middle spacing
+            const Spacer(flex: 3),
 
-              // Loader animation at bottom
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.blue.shade600,
-                          ),
+            // Loader animation at bottom
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 50),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.blue.shade600,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Loading...',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300,
-                        ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Loading...',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w300,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _navigateToAuth() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => context.read<AuthBloc>()..add(const AuthInitialized()),
-          child: const AuthView(),
+            ),
+          ],
         ),
       ),
     );

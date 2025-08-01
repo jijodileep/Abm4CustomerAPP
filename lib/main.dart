@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/di/injection.dart';
-import 'blocs/splash/splash_bloc.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'views/splash_view.dart';
 
@@ -19,15 +18,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(
-          create: (context) => getIt<AuthBloc>(),
-        ),
-        BlocProvider<SplashBloc>(
-          create: (context) => getIt<SplashBloc>(),
-        ),
-      ],
+    return BlocProvider<AuthBloc>(
+      create: (context) => getIt<AuthBloc>(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'ABM4',

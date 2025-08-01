@@ -15,17 +15,21 @@ class AuthView extends StatefulWidget {
   State<AuthView> createState() => _AuthViewState();
 }
 
-class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin {
+class _AuthViewState extends State<AuthView>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   // Controllers for Dealer Login
   final TextEditingController _dealerMobileController = TextEditingController();
-  final TextEditingController _dealerPasswordController = TextEditingController();
-  
+  final TextEditingController _dealerPasswordController =
+      TextEditingController();
+
   // Controllers for Transporter Login
-  final TextEditingController _transporterMobileController = TextEditingController();
-  final TextEditingController _transporterPasswordController = TextEditingController();
-  
+  final TextEditingController _transporterMobileController =
+      TextEditingController();
+  final TextEditingController _transporterPasswordController =
+      TextEditingController();
+
   bool _isDealerPasswordVisible = false;
   bool _isTransporterPasswordVisible = false;
 
@@ -72,21 +76,21 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 50),
                     // Logo placeholder
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Icon(
-                        Icons.business,
-                        size: 50,
-                        color: Colors.blue.shade700,
-                      ),
-                    ),
+                    // Container(
+                    //   width: 100,
+                    //   height: 100,
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.blue.shade100,
+                    //     borderRadius: BorderRadius.circular(50),
+                    //   ),
+                    //   child: Icon(
+                    //     Icons.business,
+                    //     size: 50,
+                    //     color: Colors.blue.shade700,
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     Text(
                       'Welcome Back',
@@ -96,7 +100,7 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                         color: Colors.grey.shade800,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 60),
                     Text(
                       'Sign in to your account',
                       style: TextStyle(
@@ -107,7 +111,7 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                   ],
                 ),
               ),
-              
+
               // Tab Bar
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -118,30 +122,43 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                 child: TabBar(
                   controller: _tabController,
                   indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(22),
                     color: Colors.blue.shade600,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.shade200,
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.grey.shade600,
-                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  unselectedLabelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
                   tabs: const [
-                    Tab(text: 'Dealer'),
-                    Tab(text: 'Transporter'),
+                    Tab(text: 'Dealer', height: 45),
+                    Tab(text: 'Transporter', height: 45),
                   ],
                 ),
               ),
-              
+
               // Tab Bar View
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: [
-                    _buildDealerLogin(),
-                    _buildTransporterLogin(),
-                  ],
+                  children: [_buildDealerLogin(), _buildTransporterLogin()],
                 ),
               ),
-              
+
               // Footer
               Container(
                 padding: const EdgeInsets.all(20),
@@ -170,14 +187,14 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
     return BlocBuilder<AuthBloc, auth_bloc.AuthState>(
       builder: (context, state) {
         final isLoading = state is auth_bloc.AuthLoading;
-        
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 30),
-              
+              const SizedBox(height: 40),
+
               // Mobile Number / Dealer ID Field
               TextFormField(
                 controller: _dealerMobileController,
@@ -191,13 +208,16 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
+                    borderSide: BorderSide(
+                      color: Colors.blue.shade600,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Password Field
               TextFormField(
                 controller: _dealerPasswordController,
@@ -208,33 +228,43 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isDealerPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isDealerPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
-                    onPressed: isLoading ? null : () {
-                      setState(() {
-                        _isDealerPasswordVisible = !_isDealerPasswordVisible;
-                      });
-                    },
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            setState(() {
+                              _isDealerPasswordVisible =
+                                  !_isDealerPasswordVisible;
+                            });
+                          },
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
+                    borderSide: BorderSide(
+                      color: Colors.blue.shade600,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 15),
-              
+
               // Forgot Password
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: isLoading ? null : () {
-                    _showForgotPassword(context, UserType.dealer);
-                  },
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          _showForgotPassword(context, UserType.dealer);
+                        },
                   child: Text(
                     'Forgot Password?',
                     style: TextStyle(
@@ -244,14 +274,16 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 30),
-              
+
               // Login Button
               ElevatedButton(
-                onPressed: isLoading ? null : () {
-                  _handleDealerLogin();
-                },
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        _handleDealerLogin();
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade600,
                   foregroundColor: Colors.white,
@@ -267,7 +299,9 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Text(
@@ -289,14 +323,14 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
     return BlocBuilder<AuthBloc, auth_bloc.AuthState>(
       builder: (context, state) {
         final isLoading = state is auth_bloc.AuthLoading;
-        
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 30),
-              
+
               // Mobile Number / Transporter ID Field
               TextFormField(
                 controller: _transporterMobileController,
@@ -310,13 +344,16 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
+                    borderSide: BorderSide(
+                      color: Colors.blue.shade600,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Password Field
               TextFormField(
                 controller: _transporterPasswordController,
@@ -327,33 +364,43 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isTransporterPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isTransporterPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
-                    onPressed: isLoading ? null : () {
-                      setState(() {
-                        _isTransporterPasswordVisible = !_isTransporterPasswordVisible;
-                      });
-                    },
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            setState(() {
+                              _isTransporterPasswordVisible =
+                                  !_isTransporterPasswordVisible;
+                            });
+                          },
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
+                    borderSide: BorderSide(
+                      color: Colors.blue.shade600,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 15),
-              
+
               // Forgot Password
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: isLoading ? null : () {
-                    _showForgotPassword(context, UserType.transporter);
-                  },
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          _showForgotPassword(context, UserType.transporter);
+                        },
                   child: Text(
                     'Forgot Password?',
                     style: TextStyle(
@@ -363,14 +410,16 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 30),
-              
+
               // Login Button
               ElevatedButton(
-                onPressed: isLoading ? null : () {
-                  _handleTransporterLogin();
-                },
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        _handleTransporterLogin();
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade600,
                   foregroundColor: Colors.white,
@@ -386,7 +435,9 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Text(
@@ -407,58 +458,58 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
   void _handleDealerLogin() {
     final mobileOrId = _dealerMobileController.text.trim();
     final password = _dealerPasswordController.text.trim();
-    
+
     final mobileError = Validators.validateMobileOrId(mobileOrId);
     final passwordError = Validators.validatePassword(password);
-    
+
     if (mobileError != null) {
       Helpers.showErrorSnackBar(context, mobileError);
       return;
     }
-    
+
     if (passwordError != null) {
       Helpers.showErrorSnackBar(context, passwordError);
       return;
     }
-    
+
     final loginRequest = LoginRequest(
       mobileNumberOrId: mobileOrId,
       password: password,
       userType: UserType.dealer,
     );
-    
+
     context.read<AuthBloc>().add(AuthLoginRequested(loginRequest));
   }
 
   void _handleTransporterLogin() {
     final mobileOrId = _transporterMobileController.text.trim();
     final password = _transporterPasswordController.text.trim();
-    
+
     final mobileError = Validators.validateMobileOrId(mobileOrId);
     final passwordError = Validators.validatePassword(password);
-    
+
     if (mobileError != null) {
       Helpers.showErrorSnackBar(context, mobileError);
       return;
     }
-    
+
     if (passwordError != null) {
       Helpers.showErrorSnackBar(context, passwordError);
       return;
     }
-    
+
     final loginRequest = LoginRequest(
       mobileNumberOrId: mobileOrId,
       password: password,
       userType: UserType.transporter,
     );
-    
+
     context.read<AuthBloc>().add(AuthLoginRequested(loginRequest));
   }
 
   void _showForgotPassword(BuildContext context, UserType userType) {
     final controller = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -467,12 +518,15 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Enter your mobile number or ID to reset your password:'),
+              const Text(
+                'Enter your mobile number or ID to reset your password:',
+              ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: controller,
                 decoration: InputDecoration(
-                  labelText: 'Mobile Number / ${userType.name.toUpperCase()} ID',
+                  labelText:
+                      'Mobile Number / ${userType.name.toUpperCase()} ID',
                   border: const OutlineInputBorder(),
                 ),
               ),
@@ -491,10 +545,15 @@ class _AuthViewState extends State<AuthView> with SingleTickerProviderStateMixin
                     mobileNumberOrId: mobileOrId,
                     userType: userType,
                   );
-                  context.read<AuthBloc>().add(AuthForgotPasswordRequested(request));
+                  context.read<AuthBloc>().add(
+                    AuthForgotPasswordRequested(request),
+                  );
                   Navigator.of(dialogContext).pop();
                 } else {
-                  Helpers.showErrorSnackBar(context, 'Please enter your mobile number or ID');
+                  Helpers.showErrorSnackBar(
+                    context,
+                    'Please enter your mobile number or ID',
+                  );
                 }
               },
               child: const Text('Send'),

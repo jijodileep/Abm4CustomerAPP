@@ -4,7 +4,6 @@ import '../../services/auth_service.dart';
 import '../../services/storage_service.dart';
 import '../../repositories/auth_repository.dart';
 import '../../blocs/auth/auth_bloc.dart';
-import '../../blocs/splash/splash_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -28,10 +27,6 @@ Future<void> setupDependencyInjection() async {
   // BLoCs
   getIt.registerFactory<AuthBloc>(
     () => AuthBloc(getIt<AuthService>()),
-  );
-  
-  getIt.registerFactory<SplashBloc>(
-    () => SplashBloc(getIt<AuthService>(), getIt<StorageService>()),
   );
 }
 
