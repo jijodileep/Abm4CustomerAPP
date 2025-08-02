@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Bloc/auth_bloc.dart';
-import '../Bloc/auth_event.dart';
-import '../../../services/auth_service.dart';
-import '../../../core/di/injection.dart';
-import 'auth_view.dart';
+import '../auth/Bloc/auth_bloc.dart';
+import '../auth/Bloc/auth_event.dart';
+import '../../services/auth_service.dart';
+import '../../core/di/injection.dart';
+import '../auth/Screens/auth_view.dart';
 
-class SplashView extends StatefulWidget {
-  const SplashView({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<SplashView> createState() => _SplashViewState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashViewState extends State<SplashView>
+class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
