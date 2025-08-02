@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 
 class Helpers {
   // Show snackbar
-  static void showSnackBar(BuildContext context, String message, {
+  static void showSnackBar(
+    BuildContext context,
+    String message, {
     Color? backgroundColor,
     Duration duration = const Duration(seconds: 3),
     SnackBarAction? action,
@@ -16,38 +18,24 @@ class Helpers {
         duration: duration,
         action: action,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
 
   // Show error snackbar
   static void showErrorSnackBar(BuildContext context, String message) {
-    showSnackBar(
-      context,
-      message,
-      backgroundColor: Colors.red.shade600,
-    );
+    showSnackBar(context, message, backgroundColor: Colors.red.shade600);
   }
 
   // Show success snackbar
   static void showSuccessSnackBar(BuildContext context, String message) {
-    showSnackBar(
-      context,
-      message,
-      backgroundColor: Colors.green.shade600,
-    );
+    showSnackBar(context, message, backgroundColor: Colors.green.shade600);
   }
 
   // Show info snackbar
   static void showInfoSnackBar(BuildContext context, String message) {
-    showSnackBar(
-      context,
-      message,
-      backgroundColor: Colors.blue.shade600,
-    );
+    showSnackBar(context, message, backgroundColor: Colors.blue.shade600);
   }
 
   // Show loading dialog
@@ -108,7 +96,7 @@ class Helpers {
   static String formatMobileNumber(String mobile) {
     // Remove any non-digit characters
     final digitsOnly = mobile.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     if (digitsOnly.length == 10) {
       // Format as (XXX) XXX-XXXX
       return '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
@@ -116,7 +104,7 @@ class Helpers {
       // Format as +1 (XXX) XXX-XXXX
       return '+1 (${digitsOnly.substring(1, 4)}) ${digitsOnly.substring(4, 7)}-${digitsOnly.substring(7)}';
     }
-    
+
     return mobile; // Return original if can't format
   }
 
@@ -188,17 +176,25 @@ class Helpers {
 
   // Generate random string
   static String generateRandomString(int length) {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     return String.fromCharCodes(
-      Iterable.generate(length, (_) => chars.codeUnitAt(
-        (chars.length * (DateTime.now().millisecondsSinceEpoch % 1000) / 1000).floor()
-      ))
+      Iterable.generate(
+        length,
+        (_) => chars.codeUnitAt(
+          (chars.length * (DateTime.now().millisecondsSinceEpoch % 1000) / 1000)
+              .floor(),
+        ),
+      ),
     );
   }
 
   // Debounce function calls
   static Timer? _debounceTimer;
-  static void debounce(VoidCallback callback, {Duration delay = const Duration(milliseconds: 500)}) {
+  static void debounce(
+    VoidCallback callback, {
+    Duration delay = const Duration(milliseconds: 500),
+  }) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(delay, callback);
   }
