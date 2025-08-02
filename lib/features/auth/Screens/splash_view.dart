@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/auth/auth_bloc.dart';
-import '../blocs/auth/auth_event.dart';
-import '../services/auth_service.dart';
-import '../core/di/injection.dart';
+import '../Bloc/auth_bloc.dart';
+import '../Bloc/auth_event.dart';
+import '../../../services/auth_service.dart';
+import '../../../core/di/injection.dart';
 import 'auth_view.dart';
 
 class SplashView extends StatefulWidget {

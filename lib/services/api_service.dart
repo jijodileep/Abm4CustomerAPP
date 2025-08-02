@@ -119,7 +119,7 @@ class ApiService {
         data: data,
         queryParameters: queryParameters,
         options: options,
-      );
+      ); 
     } on DioException catch (e) {
       throw _handleError(e);
     }

@@ -1,5 +1,5 @@
-import '../models/auth_model.dart';
-import '../models/user.dart';
+import '../features/auth/models/auth_model.dart';
+import '../features/auth/models/user.dart';
 import 'api_service.dart';
 import 'storage_service.dart';
 

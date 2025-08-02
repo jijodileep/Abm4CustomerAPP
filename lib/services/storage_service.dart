@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user.dart';
+import '../features/auth/models/user.dart';
 
 class StorageService {
   static const String _tokenKey = 'auth_token';

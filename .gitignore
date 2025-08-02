@@ -12,6 +12,9 @@
 .swiftpm/
 migrate_working_dir/
 
+# Qodo folder
+.qodo/
+
 # IntelliJ related
 *.iml
 *.ipr

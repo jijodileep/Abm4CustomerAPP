@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/di/injection.dart';
-import 'blocs/auth/auth_bloc.dart';
-import 'views/splash_view.dart';
+import 'features/auth/Bloc/auth_bloc.dart';
+import 'features/auth/Screens/splash_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

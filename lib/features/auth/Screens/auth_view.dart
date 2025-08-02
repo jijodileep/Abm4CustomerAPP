@@ -1,12 +1,12 @@
+import 'package:abm4/features/auth/models/auth_model.dart';
+import 'package:abm4/features/auth/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/auth/auth_bloc.dart';
-import '../blocs/auth/auth_event.dart';
-import '../blocs/auth/auth_state.dart' as auth_bloc;
-import '../models/auth_model.dart';
-import '../models/user.dart';
-import '../utils/helpers.dart';
-import '../utils/validators.dart';
+import '../Bloc/auth_bloc.dart';
+import '../Bloc/auth_event.dart';
+import '../Bloc/auth_state.dart' as auth_bloc;
+import '../../../utils/helpers.dart';
+import '../../../utils/validators.dart';
 
 class AuthView extends StatefulWidget {
   const AuthView({super.key});
