@@ -30,7 +30,7 @@ class _SplashViewState extends State<SplashView>
     );
 
     _animationController.forward();
-    
+
     // Navigate to auth screen after splash duration
     _navigateToAuth();
   }
@@ -38,14 +38,14 @@ class _SplashViewState extends State<SplashView>
   void _navigateToAuth() async {
     // Wait for splash duration
     await Future.delayed(const Duration(seconds: 3));
-    
+
     if (mounted) {
       // Check authentication status
       try {
         final authService = getIt<AuthService>();
         await authService.initializeAuth();
         final isAuthenticated = await authService.isLoggedIn();
-        
+
         if (isAuthenticated) {
           // Navigate to home screen (to be implemented)
           // For now, we'll navigate to auth screen
