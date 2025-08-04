@@ -1,5 +1,5 @@
-import 'package:abm4/features/auth/models/auth_model.dart';
-import 'package:abm4/features/auth/models/user.dart';
+import 'package:abm4_customerapp/features/auth/models/auth_model.dart';
+import 'package:abm4_customerapp/features/auth/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Bloc/auth_bloc.dart';
