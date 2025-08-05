@@ -1,6 +1,7 @@
 import '../features/auth/models/auth_model.dart';
 import '../features/auth/models/user.dart';
 import '../constants/api_endpoints.dart';
+import '../constants/string_constants.dart';
 import 'api_service.dart';
 
 class AuthService {
@@ -158,6 +159,29 @@ class AuthService {
     final token = await getToken();
     if (token != null) {
       _apiService.setAuthToken(token);
+    } else {
+      // Use hardcoded token as fallback if no user token exists
+      useHardcodedToken();
     }
+  }
+
+  /// Use the hardcoded token from string_constants.dart
+  void useHardcodedToken() {
+    _apiService.setAuthToken(token);
+  }
+
+  /// Get the hardcoded token
+  String getHardcodedToken() {
+    return token;
+  }
+
+  /// Get the SAS token for Azure Storage
+  String getSasToken() {
+    return sasToken;
+  }
+
+  /// Check if currently using hardcoded token
+  bool isUsingHardcodedToken() {
+    return _currentToken == null && token.isNotEmpty;
   }
 }

@@ -4,7 +4,7 @@ import '../../services/auth_service.dart';
 import '../../services/storage_service.dart';
 import '../../services/cache_service.dart';
 import '../../services/network_service.dart';
-import '../../repositories/auth_repository.dart';
+import '../../features/auth/repositories/auth_repository.dart';
 import '../../features/auth/Bloc/auth_bloc.dart';
 
 final GetIt getIt = GetIt.instance;

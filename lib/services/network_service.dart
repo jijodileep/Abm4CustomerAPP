@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 enum NetworkStatus { connected, disconnected, unknown }
 
@@ -18,30 +19,57 @@ class NetworkService {
   NetworkStatus _currentStatus = NetworkStatus.unknown;
   NetworkStatus get currentStatus => _currentStatus;
 
-  Timer? _connectivityTimer;
+  StreamSubscription<InternetStatus>? _connectivitySubscription;
 
   /// Initialize network monitoring
   void initialize() {
     _startNetworkMonitoring();
   }
 
-  /// Start monitoring network connectivity
+  /// Start monitoring network connectivity using internet_connection_checker_plus
   void _startNetworkMonitoring() {
-    // Check connectivity every 10 seconds
-    _connectivityTimer = Timer.periodic(
-      const Duration(seconds: 10),
-      (_) => _checkConnectivity(),
+    // Listen to connectivity changes
+    _connectivitySubscription = InternetConnection().onStatusChange.listen(
+      (InternetStatus status) {
+        final newStatus = _mapInternetStatusToNetworkStatus(status);
+        
+        if (newStatus != _currentStatus) {
+          _currentStatus = newStatus;
+          _networkStatusController.add(_currentStatus);
+          
+          if (kDebugMode) {
+            print('Network status changed to: $newStatus');
+          }
+        }
+      },
+      onError: (error) {
+        if (kDebugMode) {
+          print('Network monitoring error: $error');
+        }
+        _currentStatus = NetworkStatus.unknown;
+        _networkStatusController.add(_currentStatus);
+      },
     );
     
     // Initial check
     _checkConnectivity();
   }
 
+  /// Map InternetStatus to NetworkStatus
+  NetworkStatus _mapInternetStatusToNetworkStatus(InternetStatus status) {
+    switch (status) {
+      case InternetStatus.connected:
+        return NetworkStatus.connected;
+      case InternetStatus.disconnected:
+        return NetworkStatus.disconnected;
+    }
+  }
+
   /// Check network connectivity
   Future<void> _checkConnectivity() async {
     try {
-      final result = await _hasNetworkConnection();
-      final newStatus = result ? NetworkStatus.connected : NetworkStatus.disconnected;
+      final hasConnection = await InternetConnection().hasInternetAccess;
+      final newStatus = hasConnection ? NetworkStatus.connected : NetworkStatus.disconnected;
       
       if (newStatus != _currentStatus) {
         _currentStatus = newStatus;
@@ -56,40 +84,56 @@ class NetworkService {
     }
   }
 
-  /// Check if device has network connection
-  Future<bool> _hasNetworkConnection() async {
+  /// Check if device has internet connection
+  Future<bool> hasInternetConnection() async {
     try {
-      // Try to lookup a reliable host
-      final result = await InternetAddress.lookup('google.com');
-      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException catch (_) {
-      return false;
+      return await InternetConnection().hasInternetAccess;
     } catch (e) {
       if (kDebugMode) {
-        print('Network connectivity check failed: $e');
+        print('Internet connection check failed: $e');
       }
       return false;
     }
   }
 
-  /// Check connectivity with custom host
-  Future<bool> hasInternetConnection({String host = 'google.com'}) async {
+  /// Check connectivity with custom configuration
+  Future<bool> hasInternetConnectionWithCustom({
+    Duration? timeout,
+  }) async {
     try {
-      final result = await InternetAddress.lookup(host);
-      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException catch (_) {
+      // Use the default InternetConnection instance with timeout
+      final internetConnection = InternetConnection();
+      
+      return await internetConnection.hasInternetAccess;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Custom internet connection check failed: $e');
+      }
       return false;
     }
   }
 
   /// Check if connected to internet (one-time check)
   Future<bool> isConnected() async {
-    return await _hasNetworkConnection();
+    return await hasInternetConnection();
+  }
+
+  /// Get current internet status
+  Future<InternetStatus> getInternetStatus() async {
+    try {
+      final hasConnection = await InternetConnection().hasInternetAccess;
+      return hasConnection ? InternetStatus.connected : InternetStatus.disconnected;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Get internet status failed: $e');
+      }
+      return InternetStatus.disconnected;
+    }
   }
 
   /// Dispose resources
   void dispose() {
-    _connectivityTimer?.cancel();
+    _connectivitySubscription?.cancel();
     _networkStatusController.close();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import '../constants/string_constants.dart';
 import 'cache_service.dart';
 import 'network_service.dart';
 
@@ -19,6 +20,8 @@ class ApiService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          // Automatically set the hardcoded token for ALL API calls
+          'Authorization': 'Bearer $token',
         },
       ),
     );
@@ -172,6 +175,8 @@ class ApiService {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            // Use the hardcoded token for customer login as well
+            'Authorization': 'Bearer $token',
           },
         ),
       );
