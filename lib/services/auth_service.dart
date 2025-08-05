@@ -1,18 +1,29 @@
 import '../features/auth/models/auth_model.dart';
 import '../features/auth/models/user.dart';
+import '../constants/api_endpoints.dart';
 import 'api_service.dart';
-import 'storage_service.dart';
 
 class AuthService {
   final ApiService _apiService;
-  final StorageService _storageService;
+  String? _currentToken;
+  User? _currentUser;
 
-  AuthService(this._apiService, this._storageService);
+  AuthService(this._apiService);
 
   Future<LoginResponse> login(LoginRequest request) async {
     try {
-      final response = await _apiService.post(
-        '/auth/Login',
+      // Determine the correct endpoint based on user type
+      String endpoint;
+      if (request.userType == UserType.dealer) {
+        endpoint = ApiEndpoints.customerLogin;
+      } else if (request.userType == UserType.transporter) {
+        endpoint = ApiEndpoints.transporterLogin;
+      } else {
+        return LoginResponse.failure(error: 'Invalid user type');
+      }
+
+      final response = await _apiService.postCustomerLogin(
+        endpoint,
         data: request.toJson(),
       );
 
@@ -20,11 +31,9 @@ class AuthService {
         final loginResponse = LoginResponse.fromJson(response.data);
 
         if (loginResponse.success && loginResponse.token != null) {
-          // Store token and user data
-          await _storageService.setToken(loginResponse.token!);
-          if (loginResponse.user != null) {
-            await _storageService.setUser(loginResponse.user!);
-          }
+          // Store token and user data in memory
+          _currentToken = loginResponse.token!;
+          _currentUser = loginResponse.user;
 
           // Set auth token for future requests
           _apiService.setAuthToken(loginResponse.token!);
@@ -62,9 +71,9 @@ class AuthService {
     } catch (e) {
       // Continue with local logout even if API call fails
     } finally {
-      // Clear local storage
-      await _storageService.clearToken();
-      await _storageService.clearUser();
+      // Clear local memory
+      _currentToken = null;
+      _currentUser = null;
 
       // Remove auth token from API service
       _apiService.removeAuthToken();
@@ -72,16 +81,15 @@ class AuthService {
   }
 
   Future<bool> isLoggedIn() async {
-    final token = await _storageService.getToken();
-    return token != null && token.isNotEmpty;
+    return _currentToken != null && _currentToken!.isNotEmpty;
   }
 
   Future<User?> getCurrentUser() async {
-    return await _storageService.getUser();
+    return _currentUser;
   }
 
   Future<String?> getToken() async {
-    return await _storageService.getToken();
+    return _currentToken;
   }
 
   Future<bool> refreshToken() async {
@@ -89,19 +97,60 @@ class AuthService {
       final currentToken = await getToken();
       if (currentToken == null) return false;
 
+      // Set the current token for the refresh request
+      _apiService.setAuthToken(currentToken);
+
       final response = await _apiService.post('/auth/refresh-token');
 
       if (response.statusCode == 200) {
-        final newToken = response.data['token'] as String?;
+        final responseData = response.data as Map<String, dynamic>;
+        final newToken = responseData['token'] as String?;
+        final userData = responseData['user'] as Map<String, dynamic>?;
+        
         if (newToken != null) {
-          await _storageService.setToken(newToken);
+          _currentToken = newToken;
           _apiService.setAuthToken(newToken);
+          
+          // Update user data if provided
+          if (userData != null) {
+            final user = User.fromJson(userData);
+            _currentUser = user;
+          }
+          
           return true;
         }
       }
       return false;
     } catch (e) {
+      // If refresh fails, clear tokens to force re-login
+      await logout();
       return false;
+    }
+  }
+
+  /// Check if token needs refresh (call this periodically)
+  Future<bool> shouldRefreshToken() async {
+    final token = await getToken();
+    if (token == null) return false;
+    
+    try {
+      // Decode JWT token to check expiration (simplified version)
+      // In a real app, you'd use a JWT library to properly decode and validate
+      final parts = token.split('.');
+      if (parts.length != 3) return true; // Invalid token format
+      
+      // For now, we'll refresh every 30 minutes as a safety measure
+      // You can implement proper JWT expiration checking here
+      return true;
+    } catch (e) {
+      return true; // If we can't parse, better to refresh
+    }
+  }
+
+  /// Auto-refresh token if needed
+  Future<void> autoRefreshToken() async {
+    if (await shouldRefreshToken()) {
+      await refreshToken();
     }
   }
 

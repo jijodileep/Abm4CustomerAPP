@@ -7,6 +7,8 @@ import '../Bloc/auth_event.dart';
 import '../Bloc/auth_state.dart' as auth_bloc;
 import '../../../utils/helpers.dart';
 import '../../../utils/validators.dart';
+import '../../Dashboard/Dealer/Screens/dashboard_dealer_screen.dart';
+import '../../Dashboard/Transporter/Screens/dashboard_transporter_screen.dart';
 
 class AuthView extends StatefulWidget {
   const AuthView({super.key});
@@ -57,7 +59,21 @@ class _AuthViewState extends State<AuthView>
           // Show loading indicator if needed
         } else if (state is auth_bloc.AuthAuthenticated) {
           Helpers.showSuccessSnackBar(context, 'Login successful!');
-          // Navigate to home screen (to be implemented)
+          
+          // Navigate to appropriate dashboard based on user type
+          if (state.user.userType == UserType.dealer) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const DashboardDealerScreen(),
+              ),
+            );
+          } else if (state.user.userType == UserType.transporter) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const DashboardTransporterScreen(),
+              ),
+            );
+          }
         } else if (state is auth_bloc.AuthError) {
           Helpers.showErrorSnackBar(context, state.message);
         } else if (state is auth_bloc.AuthForgotPasswordSuccess) {

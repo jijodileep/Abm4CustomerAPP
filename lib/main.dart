@@ -1,5 +1,3 @@
-import 'package:abm4_customerapp/features/Dashboard/Dealer/Screens/dashboard_dealer_screen.dart';
-import 'package:abm4_customerapp/features/Dashboard/Transporter/Screens/dashboard_transporter_screen.dart';
 import 'package:abm4_customerapp/features/Splash/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +24,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'ABM4',
         theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-        home: const DashboardTransporterScreen(),
+        home: const SplashScreen(),
       ),
     );
   }

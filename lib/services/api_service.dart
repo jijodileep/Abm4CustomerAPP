@@ -1,12 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'cache_service.dart';
+import 'network_service.dart';
 
 class ApiService {
   static const String baseUrl = 'https://erpapi.33holdings.global';
   late final Dio _dio;
   final Logger _logger = Logger();
+  final CacheService _cacheService;
+  final NetworkService _networkService;
 
-  ApiService() {
+  ApiService(this._cacheService, this._networkService) {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -60,6 +64,8 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    await _checkNetworkConnection();
+    
     try {
       return await _dio.get<T>(
         path,
@@ -67,6 +73,67 @@ class ApiService {
         options: options,
       );
     } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// GET request with caching support
+  Future<Response<T>> getCached<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    Duration? cacheDuration,
+    bool forceRefresh = false,
+  }) async {
+    final cacheKey = _generateCacheKey(path, queryParameters);
+    
+    // Check cache first (unless force refresh)
+    if (!forceRefresh) {
+      final cachedData = await _cacheService.getCachedResponse(cacheKey);
+      if (cachedData != null) {
+        _logger.d('Cache hit for: $path');
+        return Response<T>(
+          data: cachedData as T,
+          statusCode: 200,
+          requestOptions: RequestOptions(path: path),
+        );
+      }
+    }
+    
+    // Check network connection
+    await _checkNetworkConnection();
+    
+    try {
+      final response = await _dio.get<T>(
+        path,
+        queryParameters: queryParameters,
+        options: options,
+      );
+      
+      // Cache successful response
+      if (response.statusCode == 200 && response.data != null) {
+        await _cacheService.cacheResponse(
+          cacheKey,
+          response.data as Map<String, dynamic>,
+          duration: cacheDuration,
+        );
+        _logger.d('Cached response for: $path');
+      }
+      
+      return response;
+    } on DioException catch (e) {
+      // If network fails, try to return cached data as fallback
+      if (!forceRefresh) {
+        final cachedData = await _cacheService.getCachedResponse(cacheKey);
+        if (cachedData != null) {
+          _logger.d('Network failed, using cached data for: $path');
+          return Response<T>(
+            data: cachedData as T,
+            statusCode: 200,
+            requestOptions: RequestOptions(path: path),
+          );
+        }
+      }
       throw _handleError(e);
     }
   }
@@ -80,6 +147,61 @@ class ApiService {
     try {
       return await _dio.post<T>(
         path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // Special method for customer login with different base URL
+  Future<Response<T>> postCustomerLogin<T>(
+    String fullUrl, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    try {
+      // Create a temporary Dio instance for this specific endpoint
+      final tempDio = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      // Add the same interceptors for logging
+      tempDio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            _logger.d('Request: ${options.method} ${options.path}');
+            _logger.d('Headers: ${options.headers}');
+            _logger.d('Data: ${options.data}');
+            handler.next(options);
+          },
+          onResponse: (response, handler) {
+            _logger.d(
+              'Response: ${response.statusCode} ${response.requestOptions.path}',
+            );
+            _logger.d('Data: ${response.data}');
+            handler.next(response);
+          },
+          onError: (error, handler) {
+            _logger.e('Error: ${error.message}');
+            _logger.e('Response: ${error.response?.data}');
+            handler.next(error);
+          },
+        ),
+      );
+
+      return await tempDio.post<T>(
+        fullUrl,
         data: data,
         queryParameters: queryParameters,
         options: options,
@@ -123,6 +245,43 @@ class ApiService {
     } on DioException catch (e) {
       throw _handleError(e);
     }
+  }
+
+  /// Check network connection before making requests
+  Future<void> _checkNetworkConnection() async {
+    final isConnected = await _networkService.isConnected();
+    if (!isConnected) {
+      throw NetworkException(
+        'No internet connection. Please check your network.',
+        NetworkStatus.disconnected,
+      );
+    }
+  }
+
+  /// Generate cache key from path and query parameters
+  String _generateCacheKey(String path, Map<String, dynamic>? queryParameters) {
+    final buffer = StringBuffer(path);
+    if (queryParameters != null && queryParameters.isNotEmpty) {
+      buffer.write('?');
+      final sortedKeys = queryParameters.keys.toList()..sort();
+      for (int i = 0; i < sortedKeys.length; i++) {
+        final key = sortedKeys[i];
+        buffer.write('$key=${queryParameters[key]}');
+        if (i < sortedKeys.length - 1) buffer.write('&');
+      }
+    }
+    return buffer.toString();
+  }
+
+  /// Clear all cached responses
+  Future<void> clearCache() async {
+    await _cacheService.clearAllCache();
+  }
+
+  /// Clear specific cached response
+  Future<void> clearCacheForPath(String path, [Map<String, dynamic>? queryParameters]) async {
+    final cacheKey = _generateCacheKey(path, queryParameters);
+    await _cacheService.clearCache(cacheKey);
   }
 
   ApiException _handleError(DioException error) {
