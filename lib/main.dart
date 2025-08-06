@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/di/injection.dart';
 import 'features/auth/Bloc/auth_bloc.dart';
+import 'theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'ABM4',
-        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+        theme: AppTheme.lightTheme.copyWith(
+          extensions: [
+            NetworkStatusTheme.light,
+            QuickAccessTileTheme.light,
+            DashboardTheme.light,
+          ],
+        ),
         home: const SplashScreen(),
       ),
     );

@@ -59,7 +59,7 @@ class _AuthViewState extends State<AuthView>
           // Show loading indicator if needed
         } else if (state is auth_bloc.AuthAuthenticated) {
           Helpers.showSuccessSnackBar(context, 'Login successful!');
-          
+
           // Navigate to appropriate dashboard based on user type
           if (state.user.userType == UserType.dealer) {
             Navigator.of(context).pushReplacement(
