@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -118,8 +118,8 @@ class _SplashScreenState extends State<SplashScreen>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                       child: CircularProgressIndicator(
                         strokeWidth: 3,
                         valueColor: AlwaysStoppedAnimation<Color>(
@@ -128,14 +128,14 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Loading...',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
+                    // const Text(
+                    //   'Loading...',
+                    //   style: TextStyle(
+                    //     fontSize: 14,
+                    //     color: Colors.grey,
+                    //     fontWeight: FontWeight.w300,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

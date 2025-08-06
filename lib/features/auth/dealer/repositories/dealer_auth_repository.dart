@@ -13,7 +13,7 @@ class DealerAuthRepository {
     try {
       print('Attempting dealer login with URL: ${ApiEndpoints.customerLogin}');
       print('Request body: ${jsonEncode(request.toJson())}');
-      
+
       final response = await http.post(
         Uri.parse(ApiEndpoints.customerLogin),
         headers: {
@@ -32,12 +32,17 @@ class DealerAuthRepository {
       } else {
         final data = jsonDecode(response.body);
         return DealerLoginResponse.failure(
-          error: data['message'] ?? data['error'] ?? 'Login failed with status ${response.statusCode}',
+          error:
+              data['message'] ??
+              data['error'] ??
+              'Login failed with status ${response.statusCode}',
         );
       }
     } catch (e) {
       print('Login error: $e');
-      return DealerLoginResponse.failure(error: 'Login failed: ${e.toString()}');
+      return DealerLoginResponse.failure(
+        error: 'Login failed: ${e.toString()}',
+      );
     }
   }
 
@@ -45,9 +50,7 @@ class DealerAuthRepository {
     try {
       final response = await http.post(
         Uri.parse('${ApiEndpoints.baseUrl}${ApiEndpoints.forgotPassword}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(request.toJson()),
       );
 

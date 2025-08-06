@@ -88,8 +88,7 @@ class _AuthScreenState extends State<AuthScreen>
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const SizedBox(height: 50),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 70),
                     Text(
                       'Welcome Back',
                       style: TextStyle(
@@ -109,7 +108,7 @@ class _AuthScreenState extends State<AuthScreen>
                   ],
                 ),
               ),
-
+              const SizedBox(height: 30),
               // Tab Bar
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -343,7 +342,7 @@ class _AuthScreenState extends State<AuthScreen>
                 enabled: !isLoading,
                 decoration: InputDecoration(
                   labelText: 'Mobile Number / Transporter ID',
-                  prefixIcon: const Icon(Icons.local_shipping),
+                  prefixIcon: const Icon(Icons.person),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../auth/dealer/bloc/dealer_auth_bloc.dart';
+import '../../../auth/dealer/bloc/dealer_auth_state.dart';
 
 class DashboardDealerScreen extends StatelessWidget {
   const DashboardDealerScreen({super.key});
@@ -63,22 +66,23 @@ class DashboardDealerScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Welcome Text
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Welcome back,',
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
-                    ),
-                    Text(
-                      'Hey, Dealer', // Replace with actual dealer name
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                BlocBuilder<DealerAuthBloc, DealerAuthState>(
+                  builder: (context, state) {
+                    final dealerName = state.dealer?.name ?? 'Dealer';
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome back,\n$dealerName',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 // Notification Icon
                 Stack(
