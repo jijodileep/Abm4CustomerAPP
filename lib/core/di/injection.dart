@@ -4,8 +4,11 @@ import '../../services/auth_service.dart';
 import '../../services/storage_service.dart';
 import '../../services/cache_service.dart';
 import '../../services/network_service.dart';
-import '../../features/auth/repositories/auth_repository.dart';
-import '../../features/auth/Bloc/auth_bloc.dart';
+import '../../features/auth/dealer/repositories/dealer_auth_repository.dart';
+import '../../features/auth/transporter/repositories/transporter_auth_repository.dart';
+import '../../features/auth/dealer/bloc/dealer_auth_bloc.dart';
+import '../../features/auth/transporter/bloc/transporter_auth_bloc.dart';
+import '../../constants/api_endpoints.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -29,20 +32,32 @@ Future<void> setupDependencyInjection() async {
   );
 
   getIt.registerLazySingleton<AuthService>(
-    () => AuthService(getIt<ApiService>()),
+    () => AuthService(getIt<ApiService>(), getIt<StorageService>()),
   );
 
   // Repositories
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepository(getIt<AuthService>()),
+  getIt.registerLazySingleton<DealerAuthRepository>(
+    () => DealerAuthRepository(baseUrl: ApiEndpoints.baseUrl),
+  );
+
+  getIt.registerLazySingleton<TransporterAuthRepository>(
+    () => TransporterAuthRepository(baseUrl: ApiEndpoints.baseUrl),
   );
 
   // BLoCs
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthService>()));
+  getIt.registerFactory<DealerAuthBloc>(
+    () => DealerAuthBloc(repository: getIt<DealerAuthRepository>()),
+  );
+
+  getIt.registerFactory<TransporterAuthBloc>(
+    () => TransporterAuthBloc(repository: getIt<TransporterAuthRepository>()),
+  );
 }
 
 // Helper methods for easy access
 ApiService get apiService => getIt<ApiService>();
 AuthService get authService => getIt<AuthService>();
 StorageService get storageService => getIt<StorageService>();
-AuthRepository get authRepository => getIt<AuthRepository>();
+DealerAuthRepository get dealerAuthRepository => getIt<DealerAuthRepository>();
+TransporterAuthRepository get transporterAuthRepository =>
+    getIt<TransporterAuthRepository>();

@@ -7,10 +7,10 @@ class NetworkStatusWidget extends StatefulWidget {
   final bool showOfflineMessage;
 
   const NetworkStatusWidget({
-    Key? key,
+    super.key,
     required this.child,
     this.showOfflineMessage = true,
-  }) : super(key: key);
+  });
 
   @override
   State<NetworkStatusWidget> createState() => _NetworkStatusWidgetState();
@@ -25,7 +25,7 @@ class _NetworkStatusWidgetState extends State<NetworkStatusWidget> {
     super.initState();
     _networkService = getIt<NetworkService>();
     _currentStatus = _networkService.currentStatus;
-    
+
     // Listen to network status changes
     _networkService.networkStatusStream.listen((status) {
       if (mounted) {
@@ -41,18 +41,15 @@ class _NetworkStatusWidgetState extends State<NetworkStatusWidget> {
     return Column(
       children: [
         // Network status banner
-        if (_currentStatus == NetworkStatus.disconnected && widget.showOfflineMessage)
+        if (_currentStatus == NetworkStatus.disconnected &&
+            widget.showOfflineMessage)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             color: Colors.red.shade600,
             child: Row(
               children: [
-                const Icon(
-                  Icons.wifi_off,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                const Icon(Icons.wifi_off, color: Colors.white, size: 20),
                 const SizedBox(width: 8),
                 const Expanded(
                   child: Text(
@@ -85,9 +82,10 @@ class _NetworkStatusWidgetState extends State<NetworkStatusWidget> {
               ],
             ),
           ),
-        
+
         // Connected status (optional, can be removed if not needed)
-        if (_currentStatus == NetworkStatus.connected && widget.showOfflineMessage)
+        if (_currentStatus == NetworkStatus.connected &&
+            widget.showOfflineMessage)
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             width: double.infinity,
@@ -95,11 +93,7 @@ class _NetworkStatusWidgetState extends State<NetworkStatusWidget> {
             color: Colors.green.shade600,
             child: const Row(
               children: [
-                Icon(
-                  Icons.wifi,
-                  color: Colors.white,
-                  size: 18,
-                ),
+                Icon(Icons.wifi, color: Colors.white, size: 18),
                 SizedBox(width: 8),
                 Text(
                   'Connected',
@@ -112,7 +106,7 @@ class _NetworkStatusWidgetState extends State<NetworkStatusWidget> {
               ],
             ),
           ),
-        
+
         // Main content
         Expanded(child: widget.child),
       ],
@@ -127,11 +121,11 @@ class NetworkStatusIndicator extends StatefulWidget {
   final Color? disconnectedColor;
 
   const NetworkStatusIndicator({
-    Key? key,
+    super.key,
     this.size = 24,
     this.connectedColor,
     this.disconnectedColor,
-  }) : super(key: key);
+  });
 
   @override
   State<NetworkStatusIndicator> createState() => _NetworkStatusIndicatorState();
@@ -146,7 +140,7 @@ class _NetworkStatusIndicatorState extends State<NetworkStatusIndicator> {
     super.initState();
     _networkService = getIt<NetworkService>();
     _currentStatus = _networkService.currentStatus;
-    
+
     _networkService.networkStatusStream.listen((status) {
       if (mounted) {
         setState(() {
@@ -176,10 +170,6 @@ class _NetworkStatusIndicatorState extends State<NetworkStatusIndicator> {
         break;
     }
 
-    return Icon(
-      icon,
-      size: widget.size,
-      color: color,
-    );
+    return Icon(icon, size: widget.size, color: color);
   }
 }

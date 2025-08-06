@@ -86,7 +86,7 @@ class AppTheme {
           color: AppColors.tabIndicator,
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -131,12 +131,10 @@ class AppTheme {
         secondary: AppColors.secondary,
         secondaryContainer: AppColors.secondaryLight,
         surface: AppColors.surface,
-        background: AppColors.background,
         error: AppColors.error,
         onPrimary: AppColors.textOnPrimary,
         onSecondary: AppColors.textOnPrimary,
         onSurface: AppColors.textOnSurface,
-        onBackground: AppColors.textPrimary,
         onError: AppColors.textOnPrimary,
       ),
 

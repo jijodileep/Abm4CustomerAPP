@@ -83,27 +83,23 @@ class AppColors {
   static const Color scaffoldBackground = background;
 
   // Gradient Colors
-  static const List<Color> primaryGradient = [
-    primary,
-    primaryDark,
-  ];
+  static const List<Color> primaryGradient = [primary, primaryDark];
 
-  static const List<Color> successGradient = [
-    success,
-    successDark,
-  ];
+  static const List<Color> successGradient = [success, successDark];
 
-  static const List<Color> errorGradient = [
-    error,
-    errorDark,
-  ];
+  static const List<Color> errorGradient = [error, errorDark];
 
   // Opacity Variants
-  static Color primaryWithOpacity(double opacity) => primary.withOpacity(opacity);
-  static Color successWithOpacity(double opacity) => success.withOpacity(opacity);
-  static Color errorWithOpacity(double opacity) => error.withOpacity(opacity);
-  static Color warningWithOpacity(double opacity) => warning.withOpacity(opacity);
-  static Color greyWithOpacity(double opacity) => Colors.grey.withOpacity(opacity);
+  static Color primaryWithOpacity(double opacity) =>
+      primary.withValues(alpha: opacity);
+  static Color successWithOpacity(double opacity) =>
+      success.withValues(alpha: opacity);
+  static Color errorWithOpacity(double opacity) =>
+      error.withValues(alpha: opacity);
+  static Color warningWithOpacity(double opacity) =>
+      warning.withValues(alpha: opacity);
+  static Color greyWithOpacity(double opacity) =>
+      Colors.grey.withValues(alpha: opacity);
 
   // Material Color Swatches for ThemeData
   static const MaterialColor primaryMaterialColor = Colors.blue;

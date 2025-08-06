@@ -7,12 +7,6 @@ class AppConstants {
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
 
-  // Storage Keys
-  static const String tokenKey = 'auth_token';
-  static const String userKey = 'user_data';
-  static const String userTypeKey = 'user_type';
-  static const String isFirstLaunchKey = 'is_first_launch';
-
   // Animation Durations
   static const Duration splashDuration = Duration(seconds: 3);
   static const Duration animationDuration = Duration(milliseconds: 300);
@@ -49,15 +43,6 @@ class AppConstants {
   static const String supportPhone = '+1-800-123-4567';
   static const String supportEmail = 'support@company.com';
   static const String supportChat = 'Available 24/7';
-}
-
-class ApiEndpoints {
-  static const String login = '/auth/login';
-  static const String logout = '/auth/logout';
-  static const String forgotPassword = '/auth/forgot-password';
-  static const String refreshToken = '/auth/refresh-token';
-  static const String profile = '/user/profile';
-  static const String updateProfile = '/user/profile';
 }
 
 class RouteNames {

@@ -52,7 +52,7 @@ class DashboardDealerScreen extends StatelessWidget {
               color: Colors.blue[700],
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withValues(alpha: 0.3),
                   spreadRadius: 1,
                   blurRadius: 3,
                   offset: const Offset(0, 2),
@@ -71,7 +71,7 @@ class DashboardDealerScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
                     Text(
-                      '${'Hey, Dealer'}', // Replace with actual dealer name
+                      'Hey, Dealer', // Replace with actual dealer name
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -193,13 +193,13 @@ class QuickAccessTile extends StatelessWidget {
   final VoidCallback onTap;
 
   const QuickAccessTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.icon,
     required this.color,
     this.badge,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +221,7 @@ class QuickAccessTile extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(icon, color: color, size: 28),

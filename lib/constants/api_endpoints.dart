@@ -1,11 +1,13 @@
 class ApiEndpoints {
-  // Base URLs
-  // static const String baseUrl = 'https://erpapi.33holdings.global';
-  static const String customerApiBaseUrl = 'http://devapi.abm4trades.com';
+  // Base URL
+  static const String baseUrl = 'http://devapi.abm4trades.com';
 
   // Authentication Endpoints - Currently Used
-  static const String customerLogin =
-      '$customerApiBaseUrl/auth/Login/CustomerLogin';
-  static const String transporterLogin =
-      '$customerApiBaseUrl/auth/Login/TransporterLogin';
+  static const String customerLogin = '$baseUrl/auth/Login/CustomerLogin';
+  static const String transporterLogin = '$baseUrl/auth/Login/TransporterLogin';
+  static const String refreshToken = '$baseUrl/auth/Login/Refresh';
+
+  // Other endpoints (for future use)
+  static const String forgotPassword = '/auth/forgot-password';
+  static const String logout = '/auth/logout';
 }

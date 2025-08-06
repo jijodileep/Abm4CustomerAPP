@@ -3,13 +3,15 @@ import '../features/auth/models/user.dart';
 import '../constants/api_endpoints.dart';
 import '../constants/string_constants.dart';
 import 'api_service.dart';
+import 'storage_service.dart';
 
 class AuthService {
   final ApiService _apiService;
+  final StorageService _storageService;
   String? _currentToken;
   User? _currentUser;
 
-  AuthService(this._apiService);
+  AuthService(this._apiService, this._storageService);
 
   Future<LoginResponse> login(LoginRequest request) async {
     try {
@@ -32,9 +34,15 @@ class AuthService {
         final loginResponse = LoginResponse.fromJson(response.data);
 
         if (loginResponse.success && loginResponse.token != null) {
-          // Store token and user data in memory
+          // Store token and user data in memory and persistent storage
           _currentToken = loginResponse.token!;
           _currentUser = loginResponse.user;
+
+          // Persist to storage
+          await _storageService.setToken(loginResponse.token!);
+          if (loginResponse.user != null) {
+            await _storageService.setUser(loginResponse.user!);
+          }
 
           // Set auth token for future requests
           _apiService.setAuthToken(loginResponse.token!);
@@ -56,7 +64,7 @@ class AuthService {
   Future<bool> forgotPassword(ForgotPasswordRequest request) async {
     try {
       final response = await _apiService.post(
-        '/auth/forgot-password',
+        ApiEndpoints.forgotPassword,
         data: request.toJson(),
       );
       return response.statusCode == 200;
@@ -68,7 +76,7 @@ class AuthService {
   Future<void> logout() async {
     try {
       // Call logout API if needed
-      await _apiService.post('/auth/logout');
+      await _apiService.post(ApiEndpoints.logout);
     } catch (e) {
       // Continue with local logout even if API call fails
     } finally {
@@ -76,20 +84,45 @@ class AuthService {
       _currentToken = null;
       _currentUser = null;
 
+      // Clear persistent storage
+      await _storageService.clearToken();
+      await _storageService.clearUser();
+
       // Remove auth token from API service
       _apiService.removeAuthToken();
     }
   }
 
   Future<bool> isLoggedIn() async {
-    return _currentToken != null && _currentToken!.isNotEmpty;
+    // Check memory first, then storage
+    if (_currentToken != null && _currentToken!.isNotEmpty) {
+      return true;
+    }
+
+    // Check persistent storage
+    final storedToken = await _storageService.getToken();
+    return storedToken != null && storedToken.isNotEmpty;
   }
 
   Future<User?> getCurrentUser() async {
+    // Return from memory if available
+    if (_currentUser != null) {
+      return _currentUser;
+    }
+
+    // Load from storage if not in memory
+    _currentUser = await _storageService.getUser();
     return _currentUser;
   }
 
   Future<String?> getToken() async {
+    // Return from memory if available
+    if (_currentToken != null) {
+      return _currentToken;
+    }
+
+    // Load from storage if not in memory
+    _currentToken = await _storageService.getToken();
     return _currentToken;
   }
 
@@ -101,23 +134,28 @@ class AuthService {
       // Set the current token for the refresh request
       _apiService.setAuthToken(currentToken);
 
-      final response = await _apiService.post('/auth/refresh-token');
+      // Use GET request for refresh token endpoint with full URL
+      final response = await _apiService.getFullUrl(ApiEndpoints.refreshToken);
 
       if (response.statusCode == 200) {
         final responseData = response.data as Map<String, dynamic>;
         final newToken = responseData['token'] as String?;
         final userData = responseData['user'] as Map<String, dynamic>?;
-        
+
         if (newToken != null) {
           _currentToken = newToken;
           _apiService.setAuthToken(newToken);
-          
+
+          // Persist new token
+          await _storageService.setToken(newToken);
+
           // Update user data if provided
           if (userData != null) {
             final user = User.fromJson(userData);
             _currentUser = user;
+            await _storageService.setUser(user);
           }
-          
+
           return true;
         }
       }
@@ -133,13 +171,13 @@ class AuthService {
   Future<bool> shouldRefreshToken() async {
     final token = await getToken();
     if (token == null) return false;
-    
+
     try {
       // Decode JWT token to check expiration (simplified version)
       // In a real app, you'd use a JWT library to properly decode and validate
       final parts = token.split('.');
       if (parts.length != 3) return true; // Invalid token format
-      
+
       // For now, we'll refresh every 30 minutes as a safety measure
       // You can implement proper JWT expiration checking here
       return true;

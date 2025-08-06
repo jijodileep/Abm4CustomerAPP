@@ -1,8 +1,9 @@
-import 'package:abm4_customerapp/features/Splash/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/di/injection.dart';
-import 'features/auth/Bloc/auth_bloc.dart';
+import 'core/router/app_router.dart';
+import 'features/auth/dealer/bloc/dealer_auth_bloc.dart';
+import 'features/auth/transporter/bloc/transporter_auth_bloc.dart';
 import 'theme/theme.dart';
 
 void main() async {
@@ -19,11 +20,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthBloc>(
-      create: (context) => getIt<AuthBloc>(),
-      child: MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<DealerAuthBloc>(
+          create: (context) => getIt<DealerAuthBloc>(),
+        ),
+        BlocProvider<TransporterAuthBloc>(
+          create: (context) => getIt<TransporterAuthBloc>(),
+        ),
+      ],
+      child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'ABM4',
+        title: 'ABM4_CustomerApp',
         theme: AppTheme.lightTheme.copyWith(
           extensions: [
             NetworkStatusTheme.light,
@@ -31,7 +39,7 @@ class MyApp extends StatelessWidget {
             DashboardTheme.light,
           ],
         ),
-        home: const SplashScreen(),
+        routerConfig: AppRouter.router,
       ),
     );
   }

@@ -1,12 +1,9 @@
-import 'package:equatable/equatable.dart';
-
 enum UserType { dealer, transporter }
 
-class User extends Equatable {
+// Base user class for backward compatibility with services
+class User {
   final String id;
   final String mobileNumber;
-  final String? dealerId;
-  final String? transporterId;
   final String name;
   final String email;
   final UserType userType;
@@ -17,8 +14,6 @@ class User extends Equatable {
   const User({
     required this.id,
     required this.mobileNumber,
-    this.dealerId,
-    this.transporterId,
     required this.name,
     required this.email,
     required this.userType,
@@ -31,8 +26,6 @@ class User extends Equatable {
     return User(
       id: json['id'] as String,
       mobileNumber: json['mobile_number'] as String,
-      dealerId: json['dealer_id'] as String?,
-      transporterId: json['transporter_id'] as String?,
       name: json['name'] as String,
       email: json['email'] as String,
       userType: UserType.values.firstWhere(
@@ -51,8 +44,6 @@ class User extends Equatable {
     return {
       'id': id,
       'mobile_number': mobileNumber,
-      'dealer_id': dealerId,
-      'transporter_id': transporterId,
       'name': name,
       'email': email,
       'user_type': userType.name,
@@ -61,44 +52,4 @@ class User extends Equatable {
       'last_login_at': lastLoginAt?.toIso8601String(),
     };
   }
-
-  User copyWith({
-    String? id,
-    String? mobileNumber,
-    String? dealerId,
-    String? transporterId,
-    String? name,
-    String? email,
-    UserType? userType,
-    bool? isActive,
-    DateTime? createdAt,
-    DateTime? lastLoginAt,
-  }) {
-    return User(
-      id: id ?? this.id,
-      mobileNumber: mobileNumber ?? this.mobileNumber,
-      dealerId: dealerId ?? this.dealerId,
-      transporterId: transporterId ?? this.transporterId,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      userType: userType ?? this.userType,
-      isActive: isActive ?? this.isActive,
-      createdAt: createdAt ?? this.createdAt,
-      lastLoginAt: lastLoginAt ?? this.lastLoginAt,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    id,
-    mobileNumber,
-    dealerId,
-    transporterId,
-    name,
-    email,
-    userType,
-    isActive,
-    createdAt,
-    lastLoginAt,
-  ];
 }

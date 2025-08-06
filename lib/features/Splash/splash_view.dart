@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../auth/Bloc/auth_bloc.dart';
-import '../auth/Bloc/auth_event.dart';
+import 'package:go_router/go_router.dart';
 import '../../services/auth_service.dart';
 import '../../core/di/injection.dart';
-import '../auth/Screens/auth_view.dart';
+import '../../core/router/app_router.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -61,14 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _navigateToAuthScreen() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => getIt<AuthBloc>()..add(const AuthInitialized()),
-          child: const AuthView(),
-        ),
-      ),
-    );
+    context.go(AppRouter.auth);
   }
 
   @override

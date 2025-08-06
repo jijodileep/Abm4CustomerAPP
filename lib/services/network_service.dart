@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -32,11 +31,11 @@ class NetworkService {
     _connectivitySubscription = InternetConnection().onStatusChange.listen(
       (InternetStatus status) {
         final newStatus = _mapInternetStatusToNetworkStatus(status);
-        
+
         if (newStatus != _currentStatus) {
           _currentStatus = newStatus;
           _networkStatusController.add(_currentStatus);
-          
+
           if (kDebugMode) {
             print('Network status changed to: $newStatus');
           }
@@ -50,7 +49,7 @@ class NetworkService {
         _networkStatusController.add(_currentStatus);
       },
     );
-    
+
     // Initial check
     _checkConnectivity();
   }
@@ -69,8 +68,10 @@ class NetworkService {
   Future<void> _checkConnectivity() async {
     try {
       final hasConnection = await InternetConnection().hasInternetAccess;
-      final newStatus = hasConnection ? NetworkStatus.connected : NetworkStatus.disconnected;
-      
+      final newStatus = hasConnection
+          ? NetworkStatus.connected
+          : NetworkStatus.disconnected;
+
       if (newStatus != _currentStatus) {
         _currentStatus = newStatus;
         _networkStatusController.add(_currentStatus);
@@ -97,13 +98,11 @@ class NetworkService {
   }
 
   /// Check connectivity with custom configuration
-  Future<bool> hasInternetConnectionWithCustom({
-    Duration? timeout,
-  }) async {
+  Future<bool> hasInternetConnectionWithCustom({Duration? timeout}) async {
     try {
       // Use the default InternetConnection instance with timeout
       final internetConnection = InternetConnection();
-      
+
       return await internetConnection.hasInternetAccess;
     } catch (e) {
       if (kDebugMode) {
@@ -122,7 +121,9 @@ class NetworkService {
   Future<InternetStatus> getInternetStatus() async {
     try {
       final hasConnection = await InternetConnection().hasInternetAccess;
-      return hasConnection ? InternetStatus.connected : InternetStatus.disconnected;
+      return hasConnection
+          ? InternetStatus.connected
+          : InternetStatus.disconnected;
     } catch (e) {
       if (kDebugMode) {
         print('Get internet status failed: $e');

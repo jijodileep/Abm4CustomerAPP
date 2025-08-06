@@ -1,23 +1,24 @@
-import 'package:abm4_customerapp/features/auth/models/auth_model.dart';
-import 'package:abm4_customerapp/features/auth/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Bloc/auth_bloc.dart';
-import '../Bloc/auth_event.dart';
-import '../Bloc/auth_state.dart' as auth_bloc;
+import 'package:go_router/go_router.dart';
+import '../dealer/bloc/dealer_auth_bloc.dart';
+import '../dealer/bloc/dealer_auth_state.dart';
+import '../dealer/bloc/dealer_auth_event.dart';
+import '../transporter/bloc/transporter_auth_bloc.dart';
+import '../transporter/bloc/transporter_auth_state.dart';
+import '../transporter/bloc/transporter_auth_event.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/validators.dart';
-import '../../Dashboard/Dealer/Screens/dashboard_dealer_screen.dart';
-import '../../Dashboard/Transporter/Screens/dashboard_transporter_screen.dart';
+import '../../../core/router/app_router.dart';
 
-class AuthView extends StatefulWidget {
-  const AuthView({super.key});
+class AuthScreen extends StatefulWidget {
+  const AuthScreen({super.key});
 
   @override
-  State<AuthView> createState() => _AuthViewState();
+  State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthViewState extends State<AuthView>
+class _AuthScreenState extends State<AuthScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -53,35 +54,29 @@ class _AuthViewState extends State<AuthView>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, auth_bloc.AuthState>(
-      listener: (context, state) {
-        if (state is auth_bloc.AuthLoading) {
-          // Show loading indicator if needed
-        } else if (state is auth_bloc.AuthAuthenticated) {
-          Helpers.showSuccessSnackBar(context, 'Login successful!');
-
-          // Navigate to appropriate dashboard based on user type
-          if (state.user.userType == UserType.dealer) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const DashboardDealerScreen(),
-              ),
-            );
-          } else if (state.user.userType == UserType.transporter) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const DashboardTransporterScreen(),
-              ),
-            );
-          }
-        } else if (state is auth_bloc.AuthError) {
-          Helpers.showErrorSnackBar(context, state.message);
-        } else if (state is auth_bloc.AuthForgotPasswordSuccess) {
-          Helpers.showSuccessSnackBar(context, state.message);
-        } else if (state is auth_bloc.AuthForgotPasswordError) {
-          Helpers.showErrorSnackBar(context, state.message);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<DealerAuthBloc, DealerAuthState>(
+          listener: (context, state) {
+            if (state.isAuthenticated && state.dealer != null) {
+              Helpers.showSuccessSnackBar(context, 'Login successful!');
+              context.go(AppRouter.dealerDashboard);
+            } else if (state.error != null) {
+              Helpers.showErrorSnackBar(context, state.error!);
+            }
+          },
+        ),
+        BlocListener<TransporterAuthBloc, TransporterAuthState>(
+          listener: (context, state) {
+            if (state.isAuthenticated && state.transporter != null) {
+              Helpers.showSuccessSnackBar(context, 'Login successful!');
+              context.go(AppRouter.transporterDashboard);
+            } else if (state.error != null) {
+              Helpers.showErrorSnackBar(context, state.error!);
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -94,20 +89,6 @@ class _AuthViewState extends State<AuthView>
                 child: Column(
                   children: [
                     const SizedBox(height: 50),
-                    // Logo placeholder
-                    // Container(
-                    //   width: 100,
-                    //   height: 100,
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.blue.shade100,
-                    //     borderRadius: BorderRadius.circular(50),
-                    //   ),
-                    //   child: Icon(
-                    //     Icons.business,
-                    //     size: 50,
-                    //     color: Colors.blue.shade700,
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     Text(
                       'Welcome Back',
@@ -117,7 +98,7 @@ class _AuthViewState extends State<AuthView>
                         color: Colors.grey.shade800,
                       ),
                     ),
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 10),
                     Text(
                       'Sign in to your account',
                       style: TextStyle(
@@ -205,9 +186,9 @@ class _AuthViewState extends State<AuthView>
   }
 
   Widget _buildDealerLogin() {
-    return BlocBuilder<AuthBloc, auth_bloc.AuthState>(
+    return BlocBuilder<DealerAuthBloc, DealerAuthState>(
       builder: (context, state) {
-        final isLoading = state is auth_bloc.AuthLoading;
+        final isLoading = state.isLoading;
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -284,7 +265,7 @@ class _AuthViewState extends State<AuthView>
                   onPressed: isLoading
                       ? null
                       : () {
-                          _showForgotPassword(context, UserType.dealer);
+                          _showDealerForgotPassword(context);
                         },
                   child: Text(
                     'Forgot Password?',
@@ -344,16 +325,16 @@ class _AuthViewState extends State<AuthView>
   }
 
   Widget _buildTransporterLogin() {
-    return BlocBuilder<AuthBloc, auth_bloc.AuthState>(
+    return BlocBuilder<TransporterAuthBloc, TransporterAuthState>(
       builder: (context, state) {
-        final isLoading = state is auth_bloc.AuthLoading;
+        final isLoading = state.isLoading;
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 30),
+              const SizedBox(height: 40),
 
               // Mobile Number / Transporter ID Field
               TextFormField(
@@ -423,7 +404,7 @@ class _AuthViewState extends State<AuthView>
                   onPressed: isLoading
                       ? null
                       : () {
-                          _showForgotPassword(context, UserType.transporter);
+                          _showTransporterForgotPassword(context);
                         },
                   child: Text(
                     'Forgot Password?',
@@ -499,13 +480,9 @@ class _AuthViewState extends State<AuthView>
       return;
     }
 
-    final loginRequest = LoginRequest(
-      mobileNumberOrId: mobileOrId,
-      password: password,
-      userType: UserType.dealer,
+    context.read<DealerAuthBloc>().add(
+      DealerLoginRequested(mobileNumberOrId: mobileOrId, password: password),
     );
-
-    context.read<AuthBloc>().add(AuthLoginRequested(loginRequest));
   }
 
   void _handleTransporterLogin() {
@@ -525,36 +502,34 @@ class _AuthViewState extends State<AuthView>
       return;
     }
 
-    final loginRequest = LoginRequest(
-      mobileNumberOrId: mobileOrId,
-      password: password,
-      userType: UserType.transporter,
+    context.read<TransporterAuthBloc>().add(
+      TransporterLoginRequested(
+        mobileNumberOrId: mobileOrId,
+        password: password,
+      ),
     );
-
-    context.read<AuthBloc>().add(AuthLoginRequested(loginRequest));
   }
 
-  void _showForgotPassword(BuildContext context, UserType userType) {
+  void _showDealerForgotPassword(BuildContext context) {
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Forgot Password - ${userType.name.toUpperCase()}'),
+          title: const Text('Forgot Password - DEALER'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Enter your mobile number or ID to reset your password:',
+                'Enter your mobile number or dealer ID to reset your password:',
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: controller,
-                decoration: InputDecoration(
-                  labelText:
-                      'Mobile Number / ${userType.name.toUpperCase()} ID',
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  labelText: 'Mobile Number / Dealer ID',
+                  border: OutlineInputBorder(),
                 ),
               ),
             ],
@@ -568,18 +543,68 @@ class _AuthViewState extends State<AuthView>
               onPressed: () {
                 final mobileOrId = controller.text.trim();
                 if (mobileOrId.isNotEmpty) {
-                  final request = ForgotPasswordRequest(
-                    mobileNumberOrId: mobileOrId,
-                    userType: userType,
-                  );
-                  context.read<AuthBloc>().add(
-                    AuthForgotPasswordRequested(request),
+                  context.read<DealerAuthBloc>().add(
+                    DealerForgotPasswordRequested(mobileNumberOrId: mobileOrId),
                   );
                   Navigator.of(dialogContext).pop();
                 } else {
                   Helpers.showErrorSnackBar(
                     context,
-                    'Please enter your mobile number or ID',
+                    'Please enter your mobile number or dealer ID',
+                  );
+                }
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showTransporterForgotPassword(BuildContext context) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Forgot Password - TRANSPORTER'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Enter your mobile number or transporter ID to reset your password:',
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  labelText: 'Mobile Number / Transporter ID',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final mobileOrId = controller.text.trim();
+                if (mobileOrId.isNotEmpty) {
+                  context.read<TransporterAuthBloc>().add(
+                    TransporterForgotPasswordRequested(
+                      mobileNumberOrId: mobileOrId,
+                    ),
+                  );
+                  Navigator.of(dialogContext).pop();
+                } else {
+                  Helpers.showErrorSnackBar(
+                    context,
+                    'Please enter your mobile number or transporter ID',
                   );
                 }
               },
@@ -603,9 +628,9 @@ class _AuthViewState extends State<AuthView>
             children: [
               Text('Need help? Contact our support team:'),
               SizedBox(height: 10),
-              Text('📞 Phone: +1-800-123-4567'),
+              Text('📞 Phone: +91-7907452174'),
               Text('📧 Email: support@company.com'),
-              Text('��� Chat: Available 24/7'),
+              Text('💬 Chat: Available 24/7'),
             ],
           ),
           actions: [

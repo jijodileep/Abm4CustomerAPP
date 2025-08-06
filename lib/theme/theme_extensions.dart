@@ -48,7 +48,11 @@ class NetworkStatusTheme extends ThemeExtension<NetworkStatusTheme> {
     }
     return NetworkStatusTheme(
       connectedColor: Color.lerp(connectedColor, other.connectedColor, t)!,
-      disconnectedColor: Color.lerp(disconnectedColor, other.disconnectedColor, t)!,
+      disconnectedColor: Color.lerp(
+        disconnectedColor,
+        other.disconnectedColor,
+        t,
+      )!,
       unknownColor: Color.lerp(unknownColor, other.unknownColor, t)!,
       textColor: Color.lerp(textColor, other.textColor, t)!,
     );
@@ -132,7 +136,7 @@ class DashboardTheme extends ThemeExtension<DashboardTheme> {
   static const DashboardTheme light = DashboardTheme(
     headerBackgroundColor: AppColors.primary,
     headerTextColor: AppColors.textOnPrimary,
-    welcomeTextColor: Color(0xFFFFFFFF70), // White with 70% opacity
+    welcomeTextColor: Color(0x70FFFFFF), // White with 70% opacity
     userNameTextColor: AppColors.textOnPrimary,
     notificationIconColor: AppColors.textOnPrimary,
   );
@@ -146,11 +150,13 @@ class DashboardTheme extends ThemeExtension<DashboardTheme> {
     Color? notificationIconColor,
   }) {
     return DashboardTheme(
-      headerBackgroundColor: headerBackgroundColor ?? this.headerBackgroundColor,
+      headerBackgroundColor:
+          headerBackgroundColor ?? this.headerBackgroundColor,
       headerTextColor: headerTextColor ?? this.headerTextColor,
       welcomeTextColor: welcomeTextColor ?? this.welcomeTextColor,
       userNameTextColor: userNameTextColor ?? this.userNameTextColor,
-      notificationIconColor: notificationIconColor ?? this.notificationIconColor,
+      notificationIconColor:
+          notificationIconColor ?? this.notificationIconColor,
     );
   }
 
@@ -160,11 +166,27 @@ class DashboardTheme extends ThemeExtension<DashboardTheme> {
       return this;
     }
     return DashboardTheme(
-      headerBackgroundColor: Color.lerp(headerBackgroundColor, other.headerBackgroundColor, t)!,
+      headerBackgroundColor: Color.lerp(
+        headerBackgroundColor,
+        other.headerBackgroundColor,
+        t,
+      )!,
       headerTextColor: Color.lerp(headerTextColor, other.headerTextColor, t)!,
-      welcomeTextColor: Color.lerp(welcomeTextColor, other.welcomeTextColor, t)!,
-      userNameTextColor: Color.lerp(userNameTextColor, other.userNameTextColor, t)!,
-      notificationIconColor: Color.lerp(notificationIconColor, other.notificationIconColor, t)!,
+      welcomeTextColor: Color.lerp(
+        welcomeTextColor,
+        other.welcomeTextColor,
+        t,
+      )!,
+      userNameTextColor: Color.lerp(
+        userNameTextColor,
+        other.userNameTextColor,
+        t,
+      )!,
+      notificationIconColor: Color.lerp(
+        notificationIconColor,
+        other.notificationIconColor,
+        t,
+      )!,
     );
   }
 }
@@ -172,10 +194,12 @@ class DashboardTheme extends ThemeExtension<DashboardTheme> {
 /// Helper extension to access custom themes from BuildContext
 extension ThemeExtensions on BuildContext {
   NetworkStatusTheme get networkStatusTheme =>
-      Theme.of(this).extension<NetworkStatusTheme>() ?? NetworkStatusTheme.light;
+      Theme.of(this).extension<NetworkStatusTheme>() ??
+      NetworkStatusTheme.light;
 
   QuickAccessTileTheme get quickAccessTileTheme =>
-      Theme.of(this).extension<QuickAccessTileTheme>() ?? QuickAccessTileTheme.light;
+      Theme.of(this).extension<QuickAccessTileTheme>() ??
+      QuickAccessTileTheme.light;
 
   DashboardTheme get dashboardTheme =>
       Theme.of(this).extension<DashboardTheme>() ?? DashboardTheme.light;
