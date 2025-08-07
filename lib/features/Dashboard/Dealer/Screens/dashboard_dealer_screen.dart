@@ -1,17 +1,13 @@
 import 'package:abm4_customerapp/features/Dashboard/Dealer/Cards/Place_Order/Screen/Place_order_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../constants/string_constants.dart';
 import '../../../auth/dealer/bloc/dealer_auth_bloc.dart';
 import '../../../auth/dealer/bloc/dealer_auth_state.dart';
 
 class DashboardDealerScreen extends StatelessWidget {
   const DashboardDealerScreen({super.key});
-
-  void _navigateToPlaceOrder(BuildContext context) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Navigate to Place Order')));
-  }
 
   void _navigateToMyOrders(BuildContext context) {
     ScaffoldMessenger.of(
@@ -41,7 +37,21 @@ class DashboardDealerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dealer Dashboard'),
+        title: Row(
+          children: [
+            // Icon(CupertinoIcons.back),
+            // const SizedBox(width: 8),
+            Image.asset(
+              'assets/logo.png', // Replace with your image path
+              width: 70,
+              height: 35,
+              fit: BoxFit.contain,
+            ),
+            // const SizedBox(width: 8),
+            const SizedBox(width: 35),
+            const Text('Dealer Dashboard'),
+          ],
+        ),
         backgroundColor: Colors.blue[700],
         foregroundColor: Colors.white,
         elevation: 0,
@@ -185,6 +195,21 @@ class DashboardDealerScreen extends StatelessWidget {
                   // - Sales Summary
                   // - Quick Stats
                 ],
+              ),
+            ),
+          ),
+
+          // App Version at the bottom
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 16, top: 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'App Version - ${StringConstant.version}',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

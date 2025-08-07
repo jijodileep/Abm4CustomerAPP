@@ -4,6 +4,7 @@ import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'features/auth/dealer/bloc/dealer_auth_bloc.dart';
 import 'features/auth/transporter/bloc/transporter_auth_bloc.dart';
+import 'features/Dashboard/Dealer/Cards/Place_Order/bloc/search_item_bloc.dart';
 import 'theme/theme.dart';
 
 void main() async {
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<TransporterAuthBloc>(
           create: (context) => getIt<TransporterAuthBloc>(),
+        ),
+        BlocProvider<SearchItemBloc>(
+          create: (context) => getIt<SearchItemBloc>(),
         ),
       ],
       child: MaterialApp.router(

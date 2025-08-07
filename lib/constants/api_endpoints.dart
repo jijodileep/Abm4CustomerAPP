@@ -7,6 +7,9 @@ class ApiEndpoints {
   static const String transporterLogin = '$baseUrl/auth/Login/TransporterLogin';
   static const String refreshToken = '$baseUrl/auth/Login/Refresh';
 
+  // Search Endpoints
+  static const String itemSearch = '$baseUrl/General/Item/Search';
+
   // Other endpoints (for future use)
   static const String forgotPassword = '/auth/forgot-password';
   static const String logout = '/auth/logout';

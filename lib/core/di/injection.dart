@@ -8,6 +8,8 @@ import '../../features/auth/dealer/repositories/dealer_auth_repository.dart';
 import '../../features/auth/transporter/repositories/transporter_auth_repository.dart';
 import '../../features/auth/dealer/bloc/dealer_auth_bloc.dart';
 import '../../features/auth/transporter/bloc/transporter_auth_bloc.dart';
+import '../../features/Dashboard/Dealer/Cards/Place_Order/repositories/search_item_repository.dart';
+import '../../features/Dashboard/Dealer/Cards/Place_Order/bloc/search_item_bloc.dart';
 import '../../constants/api_endpoints.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -44,6 +46,10 @@ Future<void> setupDependencyInjection() async {
     () => TransporterAuthRepository(baseUrl: ApiEndpoints.baseUrl),
   );
 
+  getIt.registerLazySingleton<SearchItemRepository>(
+    () => SearchItemRepository(),
+  );
+
   // BLoCs
   getIt.registerFactory<DealerAuthBloc>(
     () => DealerAuthBloc(repository: getIt<DealerAuthRepository>()),
@@ -51,6 +57,10 @@ Future<void> setupDependencyInjection() async {
 
   getIt.registerFactory<TransporterAuthBloc>(
     () => TransporterAuthBloc(repository: getIt<TransporterAuthRepository>()),
+  );
+
+  getIt.registerFactory<SearchItemBloc>(
+    () => SearchItemBloc(repository: getIt<SearchItemRepository>()),
   );
 }
 
