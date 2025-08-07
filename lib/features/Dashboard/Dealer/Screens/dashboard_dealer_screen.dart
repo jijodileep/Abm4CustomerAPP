@@ -87,7 +87,7 @@ class DashboardDealerScreen extends StatelessWidget {
                           'Welcome back,\n$dealerName',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.8),
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: 17,
                           ),
                         ),

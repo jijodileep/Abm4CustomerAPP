@@ -60,7 +60,6 @@ class SearchItemBloc extends Bloc<SearchItemEvent, SearchItemState> {
       );
     }
   }
-
   Future<void> _onSearchItemCleared(
     SearchItemCleared event,
     Emitter<SearchItemState> emit,
