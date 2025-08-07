@@ -1,3 +1,4 @@
+import 'package:abm4_customerapp/features/Dashboard/Dealer/Cards/Place_Order/Screen/Place_order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../auth/dealer/bloc/dealer_auth_bloc.dart';
@@ -75,7 +76,7 @@ class DashboardDealerScreen extends StatelessWidget {
                         Text(
                           'Welcome back,\n$dealerName',
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontWeight: FontWeight.bold,
                             fontSize: 17,
                           ),
@@ -141,7 +142,11 @@ class DashboardDealerScreen extends StatelessWidget {
                         // subtitle: 'Create new orders',
                         icon: Icons.add_shopping_cart,
                         color: Colors.blue,
-                        onTap: () => _navigateToPlaceOrder(context),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const PlaceOrderScreen(),
+                          ),
+                        ),
                         // subtitle: '',
                       ),
                       QuickAccessTile(
