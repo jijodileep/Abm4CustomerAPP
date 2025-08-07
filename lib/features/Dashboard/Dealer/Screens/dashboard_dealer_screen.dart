@@ -49,7 +49,10 @@ class DashboardDealerScreen extends StatelessWidget {
             ),
             // const SizedBox(width: 8),
             const SizedBox(width: 35),
-            const Text('Dealer Dashboard'),
+            const Text(
+              'Dealer Dashboard',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
           ],
         ),
         backgroundColor: Colors.blue[700],
@@ -87,7 +90,7 @@ class DashboardDealerScreen extends StatelessWidget {
                           'Welcome back,\n$dealerName',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.8),
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w400,
                             fontSize: 17,
                           ),
                         ),
@@ -208,7 +211,7 @@ class DashboardDealerScreen extends StatelessWidget {
                 'App Version - ${StringConstant.version}',
                 style: const TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),

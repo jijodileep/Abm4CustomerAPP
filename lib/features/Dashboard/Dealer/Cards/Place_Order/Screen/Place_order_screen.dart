@@ -293,6 +293,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                       fontSize: 16,
                                     ),
                                   ),
+                                  Text(
+                                    item.barcode ?? 'Unknown Item',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+
                                   const SizedBox(height: 4),
                                   if (item.currentSalesPrice != null)
                                     Text(
@@ -446,7 +454,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 'App Version - ${StringConstant.version}',
                 style: const TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
