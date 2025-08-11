@@ -16,8 +16,8 @@ class PlaceOrderScreen extends StatefulWidget {
 class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   final TextEditingController _searchController = TextEditingController();
   String searchQuery = '';
-  int selectedQuantity = 1;
   SearchItem? selectedItem;
+  Map<String, int> itemQuantities = {}; // Track quantities for each item
 
   @override
   void dispose() {
@@ -55,7 +55,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue[700],
         elevation: 2,
         shadowColor: Colors.blue.withOpacity(0.3),
         leading: IconButton(
@@ -78,7 +78,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -101,101 +101,36 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 ),
               ],
             ),
-            child: Row(
-              children: [
-                // Search Field
-                Expanded(
-                  flex: 3,
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: _onSearchChanged,
-                    decoration: InputDecoration(
-                      hintText: 'Search products',
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      suffixIcon: searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, color: Colors.grey),
-                              onPressed: _clearSearch,
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: Colors.grey[50],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _onSearchChanged,
+              decoration: InputDecoration(
+                hintText: 'Search products',
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                suffixIcon: searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.grey),
+                        onPressed: _clearSearch,
+                      )
+                    : null,
+                filled: true,
+                fillColor: Colors.grey[50],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(
+                    color: Colors.blue,
+                    width: 2,
                   ),
                 ),
-
-                const SizedBox(width: 12),
-
-                Row(
-                  children: [
-                    // Quantity TextField
-                    Container(
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          int? newQuantity = int.tryParse(value);
-                          if (newQuantity != null &&
-                              newQuantity > 0 &&
-                              newQuantity <= 99) {
-                            setState(() {
-                              selectedQuantity = newQuantity;
-                            });
-                          }
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'Qty',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 8,
-                          ),
-                        ),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 8),
-
-                    // Add Icon Button
-                    IconButton(
-                      icon: const Icon(
-                        Icons.add_circle,
-                        color: Colors.blue,
-                        size: 32,
-                      ),
-                      onPressed: () {
-                        // Handle add functionality
-                        print('Add item with quantity: $selectedQuantity');
-                      },
-                    ),
-                  ],
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-              ],
+              ),
             ),
           ),
 
@@ -271,6 +206,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     itemCount: state.items.length,
                     itemBuilder: (context, index) {
                       final item = state.items[index];
+                      final itemId = item.id?.toString() ?? index.toString();
+                      final currentQuantity = itemQuantities[itemId] ?? 0;
+
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.all(12),
@@ -291,16 +229,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 16,
+                                      color: Colors.black,
                                     ),
                                   ),
-                                  Text(
-                                    item.barcode ?? 'Unknown Item',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-
                                   const SizedBox(height: 4),
                                   if (item.currentSalesPrice != null)
                                     Text(
@@ -311,26 +242,140 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         fontSize: 14,
                                       ),
                                     ),
+                                  if (currentQuantity > 0 && item.currentSalesPrice != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        'Total: ₹${(item.currentSalesPrice! * currentQuantity).toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          color: Colors.blue[600],
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
-                            // Add Button
+
+                            // Quantity Controls
+                            Row(
+                              children: [
+                                // Minus Button
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.remove_circle_outline,
+                                    color: currentQuantity > 0
+                                        ? Colors.red
+                                        : Colors.grey,
+                                    size: 28,
+                                  ),
+                                  onPressed: currentQuantity > 0
+                                      ? () {
+                                          setState(() {
+                                            itemQuantities[itemId] =
+                                                currentQuantity - 1;
+                                            if (itemQuantities[itemId] == 0) {
+                                              itemQuantities.remove(itemId);
+                                            }
+                                          });
+
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                '${item.name}: Quantity ${currentQuantity - 1}',
+                                              ),
+                                              backgroundColor: Colors.orange,
+                                              duration: const Duration(
+                                                milliseconds: 500,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      : null,
+                                ),
+
+                                // Quantity Display
+                                Container(
+                                  width: 40,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: currentQuantity > 0
+                                        ? Colors.blue[50]
+                                        : Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: currentQuantity > 0
+                                          ? Colors.blue[200]!
+                                          : Colors.grey[300]!,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      currentQuantity.toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: currentQuantity > 0
+                                            ? Colors.blue[700]
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                // Plus Button
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.add_circle_outline,
+                                    color: Colors.green,
+                                    size: 28,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      itemQuantities[itemId] =
+                                          currentQuantity + 1;
+                                    });
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          '${item.name}: Quantity ${currentQuantity + 1}',
+                                        ),
+                                        backgroundColor: Colors.green,
+                                        duration: const Duration(
+                                          milliseconds: 500,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+
+                            // Remove Item Button
                             IconButton(
                               icon: const Icon(
-                                Icons.add_circle,
-                                color: Colors.blue,
-                                size: 28,
+                                Icons.delete_outline,
+                                color: Colors.red,
+                                size: 24,
                               ),
                               onPressed: () {
+                                // Remove item from the list and clear its quantity
                                 setState(() {
-                                  selectedItem = item;
+                                  itemQuantities.remove(itemId);
                                 });
+
+                                context.read<SearchItemBloc>().add(
+                                  SearchItemRemoved(item: item),
+                                );
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(
-                                      'Added: ${item.name} (Qty: $selectedQuantity)',
-                                    ),
-                                    backgroundColor: Colors.green,
+                                    content: Text('Removed: ${item.name}'),
+                                    backgroundColor: Colors.red,
                                     duration: const Duration(seconds: 1),
                                   ),
                                 );
@@ -354,53 +399,42 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         'Search for products to place an order',
                         style: TextStyle(color: Colors.grey[600], fontSize: 16),
                       ),
-                      if (selectedQuantity > 1)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Text(
-                            'Selected Quantity: $selectedQuantity',
-                            style: TextStyle(
-                              color: Colors.blue[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      if (selectedItem != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            margin: const EdgeInsets.symmetric(horizontal: 32),
-                            decoration: BoxDecoration(
-                              color: Colors.blue[50],
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.blue[200]!),
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Selected Item:',
-                                  style: TextStyle(
-                                    color: Colors.blue[700],
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  selectedItem!.name ?? 'Unknown Item',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                if (selectedItem!.currentSalesPrice != null)
-                                  Text(
-                                    'Price: ₹${selectedItem!.currentSalesPrice!.toStringAsFixed(2)}',
-                                    style: TextStyle(color: Colors.green[600]),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
+                      // if (selectedItem != null)
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 16),
+                      //   child: Container(
+                      //     padding: const EdgeInsets.all(16),
+                      //     margin: const EdgeInsets.symmetric(horizontal: 32),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.blue[50],
+                      //       borderRadius: BorderRadius.circular(12),
+                      //       border: Border.all(color: Colors.blue[200]!),
+                      //     ),
+                      //     child: Column(
+                      //       children: [
+                      //         // Text(
+                      //         //   'Selected Item:',
+                      //         //   style: TextStyle(
+                      //         //     color: Colors.blue[700],
+                      //         //     fontWeight: FontWeight.w600,
+                      //         //   ),
+                      //         // ),
+                      //         const SizedBox(height: 8),
+                      //         // Text(
+                      //         //   selectedItem!.name ?? '',
+                      //         //   style: const TextStyle(
+                      //         //     fontWeight: FontWeight.w500,
+                      //         //   ),
+                      //         // ),
+                      //         if (selectedItem!.currentSalesPrice != null)
+                      //           // Text(
+                      //           //   'Price: ₹${selectedItem!.currentSalesPrice!.toStringAsFixed(2)}',
+                      //           //   style: TextStyle(color: Colors.green[600]),
+                      //           // ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 );
@@ -442,7 +476,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               ),
               child: const Text(
                 'Save Order',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
               ),
             ),
           ),

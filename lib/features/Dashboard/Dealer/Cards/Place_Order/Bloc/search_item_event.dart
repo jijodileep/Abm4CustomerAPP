@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../models/search_item_model.dart';
 
 abstract class SearchItemEvent extends Equatable {
   const SearchItemEvent();
@@ -18,4 +19,13 @@ class SearchItemRequested extends SearchItemEvent {
 
 class SearchItemCleared extends SearchItemEvent {
   const SearchItemCleared();
+}
+
+class SearchItemRemoved extends SearchItemEvent {
+  final SearchItem item;
+
+  const SearchItemRemoved({required this.item});
+
+  @override
+  List<Object> get props => [item];
 }

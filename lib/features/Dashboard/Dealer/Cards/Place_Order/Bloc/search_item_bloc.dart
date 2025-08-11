@@ -12,6 +12,7 @@ class SearchItemBloc extends Bloc<SearchItemEvent, SearchItemState> {
       super(const SearchItemState()) {
     on<SearchItemRequested>(_onSearchItemRequested);
     on<SearchItemCleared>(_onSearchItemCleared);
+    on<SearchItemRemoved>(_onSearchItemRemoved);
   }
 
   Future<void> _onSearchItemRequested(
@@ -65,5 +66,20 @@ class SearchItemBloc extends Bloc<SearchItemEvent, SearchItemState> {
     Emitter<SearchItemState> emit,
   ) async {
     emit(const SearchItemState());
+  }
+
+  Future<void> _onSearchItemRemoved(
+    SearchItemRemoved event,
+    Emitter<SearchItemState> emit,
+  ) async {
+    // Remove the item from the current list
+    final updatedItems = List<SearchItem>.from(state.items)
+      ..removeWhere((item) => item.id == event.item.id);
+    
+    emit(
+      state.copyWith(
+        items: updatedItems,
+      ),
+    );
   }
 }

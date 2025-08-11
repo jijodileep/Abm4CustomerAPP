@@ -82,6 +82,13 @@ class DashboardDealerScreen extends StatelessWidget {
                 // Welcome Text
                 BlocBuilder<DealerAuthBloc, DealerAuthState>(
                   builder: (context, state) {
+                    print('=== Dashboard BlocBuilder Debug ===');
+                    print('State: $state');
+                    print('Is Authenticated: ${state.isAuthenticated}');
+                    print('Dealer: ${state.dealer}');
+                    print('Dealer Name: ${state.dealer?.name}');
+                    print('=== End Dashboard Debug ===');
+
                     final dealerName = state.dealer?.name ?? 'Dealer';
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,6 +178,7 @@ class DashboardDealerScreen extends StatelessWidget {
                       ),
                       QuickAccessTile(
                         title: 'New Arrivals',
+
                         icon: Icons.fiber_new,
                         color: Colors.blue,
                         onTap: () => _navigateToNewArrivals(context),
@@ -291,7 +299,7 @@ class QuickAccessTile extends StatelessWidget {
                 title,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: Colors.black87,
                 ),
                 maxLines: 2,

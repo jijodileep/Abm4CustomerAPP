@@ -22,6 +22,12 @@ class _AuthScreenState extends State<AuthScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  // Hardcoded credentials for testing/demo
+  static const String hardcodedDealerId = "9021345655";
+  static const String hardcodedDealerPassword = "Anu@1234";
+  static const String hardcodedTransporterId = "";
+  static const String hardcodedTransporterPassword = "";
+
   // Controllers for Dealer Login
   final TextEditingController _dealerMobileController = TextEditingController();
   final TextEditingController _dealerPasswordController =
@@ -466,6 +472,14 @@ class _AuthScreenState extends State<AuthScreen>
     final mobileOrId = _dealerMobileController.text.trim();
     final password = _dealerPasswordController.text.trim();
 
+    // Check for hardcoded credentials first
+    if (mobileOrId == hardcodedDealerId &&
+        password == hardcodedDealerPassword) {
+      Helpers.showSuccessSnackBar(context, 'Login successful! ');
+      context.go(AppRouter.dealerDashboard);
+      return;
+    }
+
     final mobileError = Validators.validateMobileOrId(mobileOrId);
     final passwordError = Validators.validatePassword(password);
 
@@ -479,6 +493,7 @@ class _AuthScreenState extends State<AuthScreen>
       return;
     }
 
+    // If not hardcoded credentials, proceed with normal authentication
     context.read<DealerAuthBloc>().add(
       DealerLoginRequested(mobileNumberOrId: mobileOrId, password: password),
     );
@@ -488,6 +503,14 @@ class _AuthScreenState extends State<AuthScreen>
     final mobileOrId = _transporterMobileController.text.trim();
     final password = _transporterPasswordController.text.trim();
 
+    // Check for hardcoded credentials first
+    if (mobileOrId == hardcodedTransporterId &&
+        password == hardcodedTransporterPassword) {
+      Helpers.showSuccessSnackBar(context, 'Login successful! ');
+      context.go(AppRouter.transporterDashboard);
+      return;
+    }
+
     final mobileError = Validators.validateMobileOrId(mobileOrId);
     final passwordError = Validators.validatePassword(password);
 
@@ -501,6 +524,7 @@ class _AuthScreenState extends State<AuthScreen>
       return;
     }
 
+    // If not hardcoded credentials, proceed with normal authentication
     context.read<TransporterAuthBloc>().add(
       TransporterLoginRequested(
         mobileNumberOrId: mobileOrId,

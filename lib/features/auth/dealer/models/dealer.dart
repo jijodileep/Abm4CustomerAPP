@@ -78,10 +78,40 @@ class Dealer extends Equatable {
   });
 
   factory Dealer.fromJson(Map<String, dynamic> json) {
+    print('=== Dealer.fromJson Debug ===');
+    print('Dealer JSON: $json');
+    print('Name field: ${json['name']}');
+    print('Email field: ${json['email']}');
+    print('Mobile field: ${json['mobile']}');
+    print('=== End Dealer Debug ===');
+
+    // Handle different possible field names for name
+    String name =
+        json['name'] as String? ??
+        json['dealer_name'] as String? ??
+        json['full_name'] as String? ??
+        json['username'] as String? ??
+        'Unknown Dealer';
+
+    // Handle different possible field names for email
+    String email =
+        json['email'] as String? ??
+        json['email_address'] as String? ??
+        json['dealer_email'] as String? ??
+        '';
+
+    // Handle different possible field names for mobile
+    String mobile =
+        json['mobile'] as String? ??
+        json['mobile_number'] as String? ??
+        json['phone'] as String? ??
+        json['phone_number'] as String? ??
+        '';
+
     return Dealer(
-      name: json['name'] as String,
-      email: json['email'] as String,
-      mobile: json['mobile'] as String,
+      name: name,
+      email: email,
+      mobile: mobile,
       contactPerson: json['contactPerson'] as String?,
       contactNumber: json['contactNumber'] as String?,
       stateId: json['stateId'] as int?,

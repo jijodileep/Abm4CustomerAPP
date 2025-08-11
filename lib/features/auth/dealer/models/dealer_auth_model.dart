@@ -34,12 +34,56 @@ class DealerLoginResponse extends Equatable {
   });
 
   factory DealerLoginResponse.fromJson(Map<String, dynamic> json) {
+    print('=== DealerLoginResponse.fromJson Debug ===');
+    print('Full JSON: $json');
+    print('Success: ${json['success']}');
+    print('Data exists: ${json['data'] != null}');
+    
+    if (json['data'] != null) {
+      print('Data content: ${json['data']}');
+      print('Token: ${json['data']['token']}');
+      print('Data.data exists: ${json['data']['data'] != null}');
+      
+      if (json['data']['data'] != null) {
+        print('Dealer data: ${json['data']['data']}');
+        print('Dealer name in response: ${json['data']['data']['name']}');
+      }
+    }
+    print('=== End Debug ===');
+    
+    // Try different possible structures for dealer data
+    Dealer? dealer;
+    String? token;
+    
+    if (json['data'] != null) {
+      final data = json['data'];
+      token = data['token'] as String?;
+      
+      // Try multiple possible locations for dealer data
+      if (data['data'] != null) {
+        // Structure: { data: { token: "...", data: { dealer_info } } }
+        dealer = Dealer.fromJson(data['data']);
+      } else if (data['dealer'] != null) {
+        // Structure: { data: { token: "...", dealer: { dealer_info } } }
+        dealer = Dealer.fromJson(data['dealer']);
+      } else if (data['user'] != null) {
+        // Structure: { data: { token: "...", user: { dealer_info } } }
+        dealer = Dealer.fromJson(data['user']);
+      } else {
+        // Structure: { data: { token: "...", name: "...", email: "..." } }
+        // Dealer data might be directly in data
+        try {
+          dealer = Dealer.fromJson(data);
+        } catch (e) {
+          print('Could not parse dealer from data directly: $e');
+        }
+      }
+    }
+    
     return DealerLoginResponse(
       success: json['success'] as bool? ?? false,
-      token: json['data'] != null ? json['data']['token'] as String? : null,
-      dealer: json['data'] != null && json['data']['data'] != null
-          ? Dealer.fromJson(json['data']['data'])
-          : null,
+      token: token,
+      dealer: dealer,
       message: json['message'] as String?,
       error: json['success'] == false
           ? json['message'] as String?
