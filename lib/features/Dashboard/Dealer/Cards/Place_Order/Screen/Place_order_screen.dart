@@ -121,10 +121,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: Colors.blue,
-                    width: 2,
-                  ),
+                  borderSide: const BorderSide(color: Colors.blue, width: 2),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -242,7 +239,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         fontSize: 14,
                                       ),
                                     ),
-                                  if (currentQuantity > 0 && item.currentSalesPrice != null)
+                                  if (currentQuantity > 0 &&
+                                      item.currentSalesPrice != null)
                                     Padding(
                                       padding: const EdgeInsets.only(top: 4),
                                       child: Text(
@@ -451,8 +449,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               onPressed: () {
                 // Calculate total items and total quantity
                 int totalItems = itemQuantities.length;
-                int totalQuantity = itemQuantities.values.fold(0, (sum, qty) => sum + qty);
-                
+                int totalQuantity = itemQuantities.values.fold(
+                  0,
+                  (sum, qty) => sum + qty,
+                );
+
                 // Handle save functionality
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -461,7 +462,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                           ? 'Order saved: $totalItems items (Total Qty: $totalQuantity)'
                           : 'No items to save',
                     ),
-                    backgroundColor: totalItems > 0 ? Colors.green : Colors.orange,
+                    backgroundColor: totalItems > 0
+                        ? Colors.green
+                        : Colors.orange,
                     duration: const Duration(seconds: 2),
                   ),
                 );
