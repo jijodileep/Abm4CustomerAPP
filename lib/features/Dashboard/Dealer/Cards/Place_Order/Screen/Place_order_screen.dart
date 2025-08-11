@@ -449,15 +449,19 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             alignment: Alignment.centerRight,
             child: ElevatedButton(
               onPressed: () {
+                // Calculate total items and total quantity
+                int totalItems = itemQuantities.length;
+                int totalQuantity = itemQuantities.values.fold(0, (sum, qty) => sum + qty);
+                
                 // Handle save functionality
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      searchQuery.isNotEmpty
-                          ? 'Saved: "$searchQuery" (Qty: $selectedQuantity)'
-                          : 'Saved with quantity: $selectedQuantity',
+                      totalItems > 0
+                          ? 'Order saved: $totalItems items (Total Qty: $totalQuantity)'
+                          : 'No items to save',
                     ),
-                    backgroundColor: Colors.green,
+                    backgroundColor: totalItems > 0 ? Colors.green : Colors.orange,
                     duration: const Duration(seconds: 2),
                   ),
                 );
