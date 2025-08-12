@@ -22,6 +22,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   Map<String, TextEditingController> quantityControllers =
       {}; // Controllers for quantity inputs
 
+  List<Map<String, dynamic>> savedOrders = [];
+  Map<String, SearchItem> itemsMap = {}; // Store item details for saved orders
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -88,6 +91,76 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       quantityControllers[itemId] = TextEditingController();
     }
     return quantityControllers[itemId]!;
+  }
+
+  void _saveOrder() {
+    if (itemQuantities.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No items to save'),
+          backgroundColor: Colors.black,
+          duration: Duration(milliseconds: 90),
+        ),
+      );
+      return;
+    }
+    // Create order data
+    List<Map<String, dynamic>> orderItems = [];
+    double totalAmount = 0.0;
+    int totalQuantity = 0;
+    itemQuantities.forEach((itemId, quantity) {
+      if (itemsMap.containsKey(itemId)) {
+        final item = itemsMap[itemId]!;
+        final itemTotal = (item.currentSalesPrice ?? 0.0) * quantity;
+        totalAmount += itemTotal;
+        totalQuantity += quantity;
+        orderItems.add({
+          'itemId': itemId,
+          'name': item.name,
+          'price': item.currentSalesPrice,
+          'quantity': quantity,
+          'total': itemTotal,
+        });
+      }
+    });
+    // Add to saved orders
+    setState(() {
+      savedOrders.add({
+        'orderId': DateTime.now().millisecondsSinceEpoch.toString(),
+        'timestamp': DateTime.now(),
+        'items': orderItems,
+        'totalAmount': totalAmount,
+        'totalQuantity': totalQuantity,
+        'totalItems': orderItems.length,
+      });
+      // Clear current order
+      itemQuantities.clear();
+      for (var controller in quantityControllers.values) {
+        controller.clear();
+      }
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Order saved successfully!${orderItems.length}items(Total:₹${totalAmount.toStringAsFixed(2)} )',
+        ),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _removeOrder(int index) {
+    setState(() {
+      savedOrders.removeAt(index);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Order removed'),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
   @override
@@ -171,8 +244,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             ),
           ),
 
-          // Main Content Area - Search Results
+          // Main Content Area - Search Results (Top Half)
           Expanded(
+            flex: 1, // Top half of the screen
             child: BlocBuilder<SearchItemBloc, SearchItemState>(
               builder: (context, state) {
                 if (state.isLoading) {
@@ -246,6 +320,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       final itemId = item.id?.toString() ?? index.toString();
                       final currentQuantity = itemQuantities[itemId] ?? 0;
                       final quantityController = _getQuantityController(itemId);
+
+                      itemsMap[itemId] = item;
 
                       // Update controller text if quantity changed externally
                       if (quantityController.text !=
@@ -428,29 +504,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerRight,
             child: ElevatedButton(
-              onPressed: () {
-                // Calculate total items and total quantity
-                int totalItems = itemQuantities.length;
-                int totalQuantity = itemQuantities.values.fold(
-                  0,
-                  (sum, qty) => sum + qty,
-                );
-
-                // Handle save functionality
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      totalItems > 0
-                          ? 'Order saved: $totalItems items (Total Qty: $totalQuantity)'
-                          : 'No items to save',
-                    ),
-                    backgroundColor: totalItems > 0
-                        ? Colors.green
-                        : Colors.orange,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              },
+              onPressed: _saveOrder,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -466,6 +520,87 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               child: const Text(
                 'Save Order',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                border: Border(
+                  top: BorderSide(color: Colors.grey[300]!, width: 1),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        bottom: BorderSide(color: Colors.grey[200]!, width: 1),
+                      ),
+                    ),
+                    child: Text(
+                      savedOrders.isEmpty
+                          ? 'Saved Orders'
+                          : 'Saved Orders (${savedOrders.length})',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Poppins',
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  // Orders List
+                  Expanded(
+                    child: savedOrders.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.shopping_cart_outlined,
+                                  size: 64,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No saved orders yet',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Add items and save to see them here',
+                                  style: TextStyle(
+                                    color: Colors.grey[500],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.all(16.0),
+                            itemCount: savedOrders.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final order = savedOrders[index];
+                              final orderItems =
+                                  order['items'] as List<Map<String, dynamic>>;
+                              final timestamp = order['timestamp'] as DateTime;
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                              );
+                            },
+                          ),
+                  ),
+                ],
               ),
             ),
           ),
