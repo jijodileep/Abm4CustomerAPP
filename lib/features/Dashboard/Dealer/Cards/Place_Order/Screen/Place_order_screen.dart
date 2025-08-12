@@ -19,10 +19,16 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   String searchQuery = '';
   SearchItem? selectedItem;
   Map<String, int> itemQuantities = {}; // Track quantities for each item
+  Map<String, TextEditingController> quantityControllers =
+      {}; // Controllers for quantity inputs
 
   @override
   void dispose() {
     _searchController.dispose();
+    // Dispose all quantity controllers
+    for (var controller in quantityControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -49,6 +55,39 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       selectedItem = null;
     });
     context.read<SearchItemBloc>().add(const SearchItemCleared());
+  }
+
+  void _updateQuantity(String itemId, String value, SearchItem item) {
+    int? quantity = int.tryParse(value);
+    if (quantity != null && quantity >= 0) {
+      setState(() {
+        if (quantity == 0) {
+          itemQuantities.remove(itemId);
+        } else {
+          itemQuantities[itemId] = quantity;
+        }
+      });
+
+      // Show feedback to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            quantity == 0
+                ? '${item.name}: Removed from order'
+                : '${item.name}: Quantity $quantity',
+          ),
+          backgroundColor: quantity == 0 ? Colors.orange : Colors.green,
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
+    }
+  }
+
+  TextEditingController _getQuantityController(String itemId) {
+    if (!quantityControllers.containsKey(itemId)) {
+      quantityControllers[itemId] = TextEditingController();
+    }
+    return quantityControllers[itemId]!;
   }
 
   @override
@@ -206,6 +245,15 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                       final item = state.items[index];
                       final itemId = item.id?.toString() ?? index.toString();
                       final currentQuantity = itemQuantities[itemId] ?? 0;
+                      final quantityController = _getQuantityController(itemId);
+
+                      // Update controller text if quantity changed externally
+                      if (quantityController.text !=
+                          currentQuantity.toString()) {
+                        quantityController.text = currentQuantity == 0
+                            ? ''
+                            : currentQuantity.toString();
+                      }
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
@@ -256,19 +304,25 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 ],
                               ),
                             ),
-                            //Quantity Input fields
+
+                            // Quantity Input Field
                             Container(
                               width: 80,
-                              margin: EdgeInsets.only(right: 8),
-                              child: TextFormField(
-                                // controller: quantityController,
+                              margin: const EdgeInsets.only(right: 8),
+                              child: TextField(
+                                controller: quantityController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(4),
+                                  LengthLimitingTextInputFormatter(
+                                    4,
+                                  ), // Max 4 digits
                                 ],
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 14),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: 'Qty',
                                   hintStyle: TextStyle(
@@ -302,115 +356,19 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                           : Colors.grey[300]!,
                                     ),
                                   ),
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 8,
                                   ),
                                 ),
-                                // onChanged: (value) {
-                                //   _updateQuantity(itemId, value, item);
-                                // },
-                                // onSubmitted: (value) {
-                                //   _updateQuantity(itemId, value, item);
-                                // },
+                                onChanged: (value) {
+                                  _updateQuantity(itemId, value, item);
+                                },
+                                onSubmitted: (value) {
+                                  _updateQuantity(itemId, value, item);
+                                },
                               ),
                             ),
-                            // Quantity Controls
-                            // Row(
-                            //   children: [
-                            //     // Minus Button
-                            //     IconButton(
-                            //       icon: Icon(
-                            //         Icons.remove_circle_outline,
-                            //         color: currentQuantity > 0
-                            //             ? Colors.red
-                            //             : Colors.grey,
-                            //         size: 28,
-                            //       ),
-                            //       onPressed: currentQuantity > 0
-                            //           ? () {
-                            //               setState(() {
-                            //                 itemQuantities[itemId] =
-                            //                     currentQuantity - 1;
-                            //                 if (itemQuantities[itemId] == 0) {
-                            //                   itemQuantities.remove(itemId);
-                            //                 }
-                            //               });
-
-                            //               ScaffoldMessenger.of(
-                            //                 context,
-                            //               ).showSnackBar(
-                            //                 SnackBar(
-                            //                   content: Text(
-                            //                     '${item.name}: Quantity ${currentQuantity - 1}',
-                            //                   ),
-                            //                   backgroundColor: Colors.orange,
-                            //                   duration: const Duration(
-                            //                     milliseconds: 500,
-                            //                   ),
-                            //                 ),
-                            //               );
-                            //             }
-                            //           : null,
-                            //     ),
-
-                            //     // Quantity Display
-                            //     Container(
-                            //       width: 40,
-                            //       height: 30,
-                            //       decoration: BoxDecoration(
-                            //         color: currentQuantity > 0
-                            //             ? Colors.blue[50]
-                            //             : Colors.grey[100],
-                            //         borderRadius: BorderRadius.circular(6),
-                            //         border: Border.all(
-                            //           color: currentQuantity > 0
-                            //               ? Colors.blue[200]!
-                            //               : Colors.grey[300]!,
-                            //         ),
-                            //       ),
-                            //       child: Center(
-                            //         child: Text(
-                            //           currentQuantity.toString(),
-                            //           style: TextStyle(
-                            //             fontWeight: FontWeight.w600,
-                            //             fontSize: 14,
-                            //             color: currentQuantity > 0
-                            //                 ? Colors.blue[700]
-                            //                 : Colors.grey[600],
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-
-                            //     // Plus Button
-                            //     IconButton(
-                            //       icon: const Icon(
-                            //         Icons.add_circle_outline,
-                            //         color: Colors.green,
-                            //         size: 28,
-                            //       ),
-                            //       onPressed: () {
-                            //         setState(() {
-                            //           itemQuantities[itemId] =
-                            //               currentQuantity + 1;
-                            //         });
-
-                            //         ScaffoldMessenger.of(context).showSnackBar(
-                            //           SnackBar(
-                            //             content: Text(
-                            //               '${item.name}: Quantity ${currentQuantity + 1}',
-                            //             ),
-                            //             backgroundColor: Colors.green,
-                            //             duration: const Duration(
-                            //               milliseconds: 500,
-                            //             ),
-                            //           ),
-                            //         );
-                            //       },
-                            //     ),
-                            //   ],
-                            // ),
 
                             // Remove Item Button
                             IconButton(
@@ -423,6 +381,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 // Remove item from the list and clear its quantity
                                 setState(() {
                                   itemQuantities.remove(itemId);
+                                  quantityControllers[itemId]?.clear();
                                 });
 
                                 context.read<SearchItemBloc>().add(
@@ -456,42 +415,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         'Search for products to place an order',
                         style: TextStyle(color: Colors.grey[600], fontSize: 16),
                       ),
-                      // if (selectedItem != null)
-                      // Padding(
-                      //   padding: const EdgeInsets.only(top: 16),
-                      //   child: Container(
-                      //     padding: const EdgeInsets.all(16),
-                      //     margin: const EdgeInsets.symmetric(horizontal: 32),
-                      //     decoration: BoxDecoration(
-                      //       color: Colors.blue[50],
-                      //       borderRadius: BorderRadius.circular(12),
-                      //       border: Border.all(color: Colors.blue[200]!),
-                      //     ),
-                      //     child: Column(
-                      //       children: [
-                      //         // Text(
-                      //         //   'Selected Item:',
-                      //         //   style: TextStyle(
-                      //         //     color: Colors.blue[700],
-                      //         //     fontWeight: FontWeight.w600,
-                      //         //   ),
-                      //         // ),
-                      //         const SizedBox(height: 8),
-                      //         // Text(
-                      //         //   selectedItem!.name ?? '',
-                      //         //   style: const TextStyle(
-                      //         //     fontWeight: FontWeight.w500,
-                      //         //   ),
-                      //         // ),
-                      //         if (selectedItem!.currentSalesPrice != null)
-                      //           // Text(
-                      //           //   'Price: ₹${selectedItem!.currentSalesPrice!.toStringAsFixed(2)}',
-                      //           //   style: TextStyle(color: Colors.green[600]),
-                      //           // ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 );
