@@ -646,6 +646,65 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[50],
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.blue[200]!,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Total Qty: ${order['totalQuantity']} • ₹${order['totalAmount'].toStringAsFixed(2)}',
+                                        // style: TextStyle(
+                                        //   fontSize: 14,
+                                        //   color: Colors.blue[700],
+                                        //   fontWeight: FontWeight.w600,
+                                        // ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'Items:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                    // const SizedBox(height: 8),
+                                    Wrap(
+                                      spacing: 6,
+                                      runSpacing: 6,
+                                      children: orderItems.map((item) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[50],
+
+                                            // color: Colors.blue[200]!,
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.blue[200]!,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '${item['name']} (${item['quantity']})',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
                                   ],
                                 ),
                               );
