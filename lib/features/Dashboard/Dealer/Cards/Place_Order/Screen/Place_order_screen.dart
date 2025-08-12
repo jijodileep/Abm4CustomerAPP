@@ -518,7 +518,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 elevation: 2,
               ),
               child: const Text(
-                'Save Order',
+                'Add Item',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
               ),
             ),
@@ -545,8 +545,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                     ),
                     child: Text(
                       savedOrders.isEmpty
-                          ? 'Saved Orders'
-                          : 'Saved Orders (${savedOrders.length})',
+                          ? 'Saved Items'
+                          : 'Saved Items (${savedOrders.length})',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w400,
@@ -596,6 +596,58 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                               final timestamp = order['timestamp'] as DateTime;
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[200]!),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Order #${order['orderId'].toString().substring(order['orderId'].toString().length - 6)}',
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.delete_outline,
+                                                color: Colors.red,
+                                                size: 24,
+                                              ),
+                                              onPressed: () =>
+                                                  _removeOrder(index),
+                                              padding: EdgeInsets.zero,
+                                              constraints:
+                                                  const BoxConstraints(),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -610,8 +662,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'App Version - ${StringConstant.version}',
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: Colors.blue[700],
                   fontWeight: FontWeight.w500,
                 ),
               ),

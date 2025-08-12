@@ -217,8 +217,8 @@ class DashboardDealerScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 'App Version - ${StringConstant.version}',
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: Colors.blue[700],
                   fontWeight: FontWeight.w500,
                 ),
               ),
