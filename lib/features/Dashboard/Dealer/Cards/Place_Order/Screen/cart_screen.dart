@@ -11,6 +11,8 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final Map<String, TextEditingController> _controllers = {};
+
   void _updateQuantity(
     CartProvider cartProvider,
     String itemId,
@@ -104,13 +106,18 @@ class _CartScreenState extends State<CartScreen> {
 
           return Column(
             children: [
-              // Cart Items List
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(12),
                   itemCount: cartProvider.items.length,
                   itemBuilder: (context, index) {
                     final item = cartProvider.items[index];
+
+                    // Create a controller for each item to track text changes
+                    _controllers[item.itemId] ??= TextEditingController(
+                      text: '${item.quantity}',
+                    );
+
                     return Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.all(12),
@@ -146,25 +153,19 @@ class _CartScreenState extends State<CartScreen> {
                                   children: [
                                     Text(
                                       'Qty: ${item.quantity}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                     const SizedBox(width: 20),
                                     Text(
                                       '₹${item.total.toStringAsFixed(2)}',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          // Quantity Input, Confirm and Delete
+                          // Quantity Input + Tick Button + Delete
                           Row(
                             children: [
                               // Quantity Input Field
@@ -172,8 +173,7 @@ class _CartScreenState extends State<CartScreen> {
                                 width: 60,
                                 height: 35,
                                 child: TextFormField(
-                                  key: Key('quantity_${item.itemId}'),
-                                  initialValue: '${item.quantity}',
+                                  controller: _controllers[item.itemId],
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -192,59 +192,30 @@ class _CartScreenState extends State<CartScreen> {
                                         width: 1,
                                       ),
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey[300]!,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: BorderSide(
-                                        color: Colors.blue[600]!,
-                                        width: 1,
-                                      ),
-                                    ),
                                   ),
-                                  onFieldSubmitted: (value) {
-                                    _updateQuantity(
-                                      cartProvider,
-                                      item.itemId,
-                                      value,
-                                      context,
-                                    );
-                                  },
                                 ),
                               ),
-                              // Confirm/Tick Button
+                              const SizedBox(width: 6),
+
+                              // Tick Button
                               IconButton(
-                                onPressed: () {
-                                  // Get the current value from the text field
-                                  final textField = context
-                                      .findAncestorStateOfType<
-                                        FormFieldState
-                                      >();
-                                  if (textField != null) {
-                                    _updateQuantity(
-                                      cartProvider,
-                                      item.itemId,
-                                      textField.value.toString(),
-                                      context,
-                                    );
-                                  }
-                                },
                                 icon: const Icon(
-                                  Icons.check_circle_outline,
-                                  // color: Colors.green,
-                                  size: 20,
+                                  Icons.check,
+                                  color: Colors.green,
+                                  size: 22,
                                 ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 32,
-                                  minHeight: 32,
-                                ),
-                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  final value = _controllers[item.itemId]!.text
+                                      .trim();
+                                  _updateQuantity(
+                                    cartProvider,
+                                    item.itemId,
+                                    value,
+                                    context,
+                                  );
+                                },
                               ),
+
                               const SizedBox(width: 4),
                               // Delete Button
                               IconButton(
@@ -315,6 +286,7 @@ class _CartScreenState extends State<CartScreen> {
                   },
                 ),
               ),
+
               // Cart Summary
               Container(
                 padding: const EdgeInsets.all(20),
@@ -331,17 +303,11 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         const Text(
                           'Total Items:',
-                          style: TextStyle(
-                            fontSize: 15,
-                            // fontWeight: FontWeight.w500,
-                          ),
+                          style: TextStyle(fontSize: 15),
                         ),
                         Text(
                           '${cartProvider.totalItems}',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            // fontWeight: FontWeight.w600,
-                          ),
+                          style: const TextStyle(fontSize: 15),
                         ),
                       ],
                     ),
@@ -417,10 +383,7 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             child: const Text(
                               'Clear Cart',
-                              style: TextStyle(
-                                fontSize: 15,
-                                // fontWeight: FontWeight.w500,
-                              ),
+                              style: TextStyle(fontSize: 15),
                             ),
                           ),
                         ),
@@ -430,16 +393,7 @@ class _CartScreenState extends State<CartScreen> {
                           flex: 2,
                           child: ElevatedButton(
                             onPressed: () {
-                              // TODO: Implement checkout functionality
-                              // ScaffoldMessenger.of(context).showSnackBar(
-                              //   const SnackBar(
-                              //     content: Text(
-                              //       'Checkout functionality coming soon!',
-                              //     ),
-                              //     backgroundColor: Colors.blue,
-                              //     duration: Duration(milliseconds: 1500),
-                              //   ),
-                              // );
+                              // Checkout function here
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue[600],
@@ -464,6 +418,7 @@ class _CartScreenState extends State<CartScreen> {
                   ],
                 ),
               ),
+
               // App Version
               Padding(
                 padding: const EdgeInsets.only(left: 16, bottom: 16, top: 8),
