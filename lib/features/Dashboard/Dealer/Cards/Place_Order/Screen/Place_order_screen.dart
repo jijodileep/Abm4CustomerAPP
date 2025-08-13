@@ -196,6 +196,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               ),
             ),
             const SizedBox(width: 90),
+            //  Consumer<CartProvider>(
             IconButton(
               onPressed: () {
                 Navigator.push(
