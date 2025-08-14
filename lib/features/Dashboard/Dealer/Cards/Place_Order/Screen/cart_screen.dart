@@ -25,7 +25,7 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Quantity updated to $newQuantity'),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.blue,
           duration: const Duration(milliseconds: 800),
         ),
       );
@@ -201,7 +201,7 @@ class _CartScreenState extends State<CartScreen> {
                               IconButton(
                                 icon: const Icon(
                                   Icons.check,
-                                  color: Colors.green,
+                                  color: Colors.blue,
                                   size: 22,
                                 ),
                                 onPressed: () {

@@ -83,7 +83,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 ? '${item.name}: Removed from order'
                 : '${item.name}: Quantity $quantity',
           ),
-          backgroundColor: quantity == 0 ? Colors.orange : Colors.green,
+          backgroundColor: quantity == 0 ? Colors.orange : Colors.blue,
           duration: const Duration(milliseconds: 800),
         ),
       );
@@ -148,7 +148,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
         content: Text(
           'Order saved successfully!${orderItems.length}items(Total:₹${totalAmount.toStringAsFixed(2)} )',
         ),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blue,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -412,7 +412,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                     Text(
                                       '₹${item.currentSalesPrice!.toStringAsFixed(2)}',
                                       style: TextStyle(
-                                        color: Colors.green[600],
+                                        color: Colors.blue[600],
                                         fontWeight: FontWeight.w500,
                                         fontSize: 14,
                                       ),
@@ -538,7 +538,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         content: Text(
                                           '${item.name} added to cart!',
                                         ),
-                                        backgroundColor: Colors.green,
+                                        backgroundColor: Colors.blue,
                                         duration: const Duration(
                                           milliseconds: 1000,
                                         ),
