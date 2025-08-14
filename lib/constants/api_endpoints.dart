@@ -1,7 +1,7 @@
 class ApiEndpoints {
   // Environment-based configuration
   static const String _devBaseUrl = 'http://devapi.abm4trades.com';
-  static const String _prodBaseUrl = 'https://api.abm4trades.com'; // Use HTTPS for production
+  // static const String _prodBaseUrl = 'https://api.abm4trades.com'; // Use HTTPS for production
   
   // Get base URL based on build mode or environment variable
   static String get baseUrl {

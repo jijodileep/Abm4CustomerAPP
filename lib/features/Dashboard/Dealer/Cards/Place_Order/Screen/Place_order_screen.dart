@@ -9,6 +9,7 @@ import '../bloc/search_item_bloc.dart';
 import '../bloc/search_item_event.dart';
 import '../bloc/search_item_state.dart';
 import '../models/search_item_model.dart';
+import '../provider/cart_provider.dart';
 // import '../providers/cart_provider.dart';
 
 class PlaceOrderScreen extends StatefulWidget {
@@ -97,61 +98,66 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     return quantityControllers[itemId]!;
   }
 
-  void _saveOrder() {
+  void _addAllItemsToCart() {
     if (itemQuantities.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No items to save'),
-          backgroundColor: Colors.black,
-          duration: Duration(milliseconds: 90),
+          content: Text('No items selected to add to cart'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 1),
         ),
       );
       return;
     }
-    // Create order data
-    List<Map<String, dynamic>> orderItems = [];
+
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    int itemsAdded = 0;
     double totalAmount = 0.0;
-    int totalQuantity = 0;
+
+    // Add all items with quantities to cart
     itemQuantities.forEach((itemId, quantity) {
-      if (itemsMap.containsKey(itemId)) {
+      if (itemsMap.containsKey(itemId) && quantity > 0) {
         final item = itemsMap[itemId]!;
-        final itemTotal = (item.currentSalesPrice ?? 0.0) * quantity;
-        totalAmount += itemTotal;
-        totalQuantity += quantity;
-        orderItems.add({
-          'itemId': itemId,
-          'name': item.name,
-          'price': item.currentSalesPrice,
-          'quantity': quantity,
-          'total': itemTotal,
-        });
+        cartProvider.addItem(
+          itemId,
+          item.name ?? 'Unknown Item',
+          item.currentSalesPrice ?? 0.0,
+          quantity,
+        );
+        itemsAdded++;
+        totalAmount += (item.currentSalesPrice ?? 0.0) * quantity;
       }
     });
-    // Add to saved orders
-    setState(() {
-      savedOrders.add({
-        'orderId': DateTime.now().millisecondsSinceEpoch.toString(),
-        'timestamp': DateTime.now(),
-        'items': orderItems,
-        'totalAmount': totalAmount,
-        'totalQuantity': totalQuantity,
-        'totalItems': orderItems.length,
+
+    if (itemsAdded > 0) {
+      // Clear current selections after adding to cart
+      setState(() {
+        itemQuantities.clear();
+        for (var controller in quantityControllers.values) {
+          controller.clear();
+        }
       });
-      // Clear current order
-      itemQuantities.clear();
-      for (var controller in quantityControllers.values) {
-        controller.clear();
-      }
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Order saved successfully!${orderItems.length}items(Total:₹${totalAmount.toStringAsFixed(2)} )',
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '$itemsAdded item${itemsAdded > 1 ? 's' : ''} added to cart! (Total: ₹${totalAmount.toStringAsFixed(2)})',
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+          action: SnackBarAction(
+            label: 'View Cart',
+            textColor: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartScreen()),
+              );
+            },
+          ),
         ),
-        backgroundColor: Colors.blue,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+    }
   }
 
   void _removeOrder(int index) {
@@ -538,7 +544,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         content: Text(
                                           '${item.name} added to cart!',
                                         ),
-                                        backgroundColor: Colors.blue,
+                                        backgroundColor: Colors.green,
                                         duration: const Duration(
                                           milliseconds: 1000,
                                         ),
@@ -567,32 +573,32 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                             ),
 
                             // Remove Item Button
-                            IconButton(
-                              icon: const Icon(
-                                Icons.delete_outline,
-                                color: Colors.red,
-                                size: 24,
-                              ),
-                              onPressed: () {
-                                // Remove item from the list and clear its quantity
-                                setState(() {
-                                  itemQuantities.remove(itemId);
-                                  quantityControllers[itemId]?.clear();
-                                });
+                            // IconButton(
+                            //   icon: const Icon(
+                            //     Icons.delete_outline,
+                            //     color: Colors.red,
+                            //     size: 24,
+                            //   ),
+                            //   onPressed: () {
+                            //     // Remove item from the list and clear its quantity
+                            //     setState(() {
+                            //       itemQuantities.remove(itemId);
+                            //       quantityControllers[itemId]?.clear();
+                            //     });
 
-                                context.read<SearchItemBloc>().add(
-                                  SearchItemRemoved(item: item),
-                                );
+                            //     context.read<SearchItemBloc>().add(
+                            //       SearchItemRemoved(item: item),
+                            //     );
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Removed: ${item.name}'),
-                                    backgroundColor: Colors.red,
-                                    duration: const Duration(milliseconds: 90),
-                                  ),
-                                );
-                              },
-                            ),
+                            //     ScaffoldMessenger.of(context).showSnackBar(
+                            //       SnackBar(
+                            //         content: Text('Removed: ${item.name}'),
+                            //         backgroundColor: Colors.red,
+                            //         duration: const Duration(milliseconds: 90),
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
                           ],
                         ),
                       );
@@ -618,13 +624,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             ),
           ),
 
-          // Save Button
+          // Add All Items to Cart Button
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerRight,
             child: ElevatedButton(
-              onPressed: _saveOrder,
+              onPressed: _addAllItemsToCart,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -638,161 +644,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 elevation: 2,
               ),
               child: const Text(
-                'Add Item',
+                'Add to Cart',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
               ),
             ),
           ),
-          // Expanded(
-          //   flex: 1,
-          //   child: Container(
-          //     decoration: BoxDecoration(
-          //       color: Colors.grey[100],
-          //       border: Border(
-          //         top: BorderSide(color: Colors.grey[300]!, width: 1),
-          //       ),
-          //     ),
-          //     child: Column(
-          //       children: [
-          //         Container(
-          //           width: double.infinity,
-          //           padding: EdgeInsets.all(16.0),
-          //           decoration: BoxDecoration(
-          //             color: Colors.white,
-          //             border: Border(
-          //               bottom: BorderSide(color: Colors.grey[200]!, width: 1),
-          //             ),
-          //           ),
-          //           child: Text(
-          //             savedOrders.isEmpty
-          //                 ? 'Saved Items'
-          //                 : 'Saved Items (${savedOrders.length})',
-          //             style: TextStyle(
-          //               fontSize: 18,
-          //               fontWeight: FontWeight.w400,
-          //               fontFamily: 'Poppins',
-          //               color: Colors.black87,
-          //             ),
-          //           ),
-          //         ),
-          //         // Orders List
-          //         Expanded(
-          //           child: savedOrders.isEmpty
-          //               ? Center(
-          //                   child: Column(
-          //                     mainAxisAlignment: MainAxisAlignment.center,
-          //                     children: [
-          //                       Icon(
-          //                         Icons.shopping_cart_outlined,
-          //                         size: 64,
-          //                         color: Colors.grey[400],
-          //                       ),
-          //                       const SizedBox(height: 16),
-          //                       Text(
-          //                         'No saved orders yet',
-          //                         style: TextStyle(
-          //                           color: Colors.grey[600],
-          //                           fontSize: 16,
-          //                         ),
-          //                       ),
-          //                       const SizedBox(height: 8),
-          //                       Text(
-          //                         'Add items and save to see them here',
-          //                         style: TextStyle(
-          //                           color: Colors.grey[500],
-          //                           fontSize: 14,
-          //                         ),
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 )
-          //               : ListView.builder(
-          //                   padding: EdgeInsets.all(16.0),
-          //                   itemCount: savedOrders.length,
-          //                   itemBuilder: (BuildContext context, int index) {
-          //                     final order = savedOrders[index];
-          //                     final orderItems =
-          //                         order['items'] as List<Map<String, dynamic>>;
-          //                     final timestamp = order['timestamp'] as DateTime;
-          //                     return Container(
-          //                       margin: const EdgeInsets.only(bottom: 12),
-          //                       padding: const EdgeInsets.all(16),
-          //                       decoration: BoxDecoration(
-          //                         color: Colors.white,
-          //                         borderRadius: BorderRadius.circular(12),
-          //                         border: Border.all(color: Colors.grey[200]!),
-          //                         boxShadow: [
-          //                           BoxShadow(
-          //                             color: Colors.grey.withOpacity(0.1),
-          //                             spreadRadius: 1,
-          //                             blurRadius: 4,
-          //                             offset: const Offset(0, 2),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                       child: Column(
-          //                         crossAxisAlignment: CrossAxisAlignment.start,
-          //                         children: [
-          //                           Row(
-          //                             mainAxisAlignment:
-          //                                 MainAxisAlignment.spaceBetween,
-          //                             children: [
-          //                               Text(''),
-          //                               Row(
-          //                                 children: [
-          //                                   const SizedBox(width: 12),
-          //                                   IconButton(
-          //                                     icon: const Icon(
-          //                                       Icons.delete_outline,
-          //                                       color: Colors.red,
-          //                                       size: 24,
-          //                                     ),
-          //                                     onPressed: () =>
-          //                                         _removeOrder(index),
-          //                                     padding: EdgeInsets.zero,
-          //                                     constraints:
-          //                                         const BoxConstraints(),
-          //                                   ),
-          //                                 ],
-          //                               ),
-          //                             ],
-          //                           ),
-          //                           Container(
-          //                             padding: EdgeInsets.symmetric(
-          //                               horizontal: 12,
-          //                               vertical: 8,
-          //                             ),
-          //                             child: Text(
-          //                               'Total Qty: ${order['totalQuantity']}',
-          //                               style: TextStyle(fontSize: 14),
-          //                             ),
-          //                           ),
-          //                           Wrap(
-          //                             spacing: 6,
-          //                             runSpacing: 6,
-          //                             children: orderItems.map((item) {
-          //                               return Container(
-          //                                 padding: const EdgeInsets.symmetric(
-          //                                   horizontal: 10,
-          //                                   vertical: 6,
-          //                                 ),
-          //                                 child: Text(
-          //                                   '${item['name']}',
-          //                                   style: TextStyle(fontSize: 12),
-          //                                 ),
-          //                               );
-          //                             }).toList(),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     );
-          //                   },
-          //                 ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Padding(
             padding: const EdgeInsets.only(left: 16, bottom: 16, top: 8),
             child: Align(
