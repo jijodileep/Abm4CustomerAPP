@@ -90,7 +90,7 @@ class _NetworkStatusWidgetState extends State<NetworkStatusWidget> {
             duration: const Duration(milliseconds: 300),
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-            color: Colors.blue.shade600,
+            color: Colors.amber.shade800,
             child: const Row(
               children: [
                 Icon(Icons.wifi, color: Colors.white, size: 18),

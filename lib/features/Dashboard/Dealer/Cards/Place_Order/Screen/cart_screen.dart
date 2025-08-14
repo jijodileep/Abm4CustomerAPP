@@ -44,9 +44,9 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Colors.amber.shade700,
         elevation: 2,
-        shadowColor: Colors.blue.withOpacity(0.3),
+        shadowColor: Colors.amber.shade700,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () {
@@ -199,9 +199,9 @@ class _CartScreenState extends State<CartScreen> {
 
                               // Tick Button
                               IconButton(
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.check,
-                                  color: Colors.blue,
+                                  color: Colors.amber.shade700,
                                   size: 22,
                                 ),
                                 onPressed: () {
@@ -374,7 +374,7 @@ class _CartScreenState extends State<CartScreen> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue[600],
+                              backgroundColor: Colors.amber.shade700,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -396,7 +396,7 @@ class _CartScreenState extends State<CartScreen> {
                               // Checkout function here
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue[600],
+                              backgroundColor: Colors.amber.shade700,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -427,7 +427,7 @@ class _CartScreenState extends State<CartScreen> {
                   child: Text(
                     'App Version - ${StringConstant.version}',
                     style: TextStyle(
-                      color: Colors.blue[700],
+                      color: Colors.amber.shade700,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

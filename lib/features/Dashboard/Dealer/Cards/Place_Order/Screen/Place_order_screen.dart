@@ -178,7 +178,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Colors.amber.shade700,
         elevation: 2,
         shadowColor: Colors.blue.withOpacity(0.3),
         leading: IconButton(
@@ -544,7 +544,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         content: Text(
                                           '${item.name} added to cart!',
                                         ),
-                                        backgroundColor: Colors.green,
+                                        backgroundColor: Colors.amber.shade700,
                                         duration: const Duration(
                                           milliseconds: 1000,
                                         ),
@@ -565,40 +565,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 child: Icon(
                                   Icons.check,
                                   color: currentQuantity > 0
-                                      ? Colors.blue
+                                      ? Colors.amber.shade700
                                       : Colors.grey,
                                   size: 20,
                                 ),
                               ),
                             ),
-
-                            // Remove Item Button
-                            // IconButton(
-                            //   icon: const Icon(
-                            //     Icons.delete_outline,
-                            //     color: Colors.red,
-                            //     size: 24,
-                            //   ),
-                            //   onPressed: () {
-                            //     // Remove item from the list and clear its quantity
-                            //     setState(() {
-                            //       itemQuantities.remove(itemId);
-                            //       quantityControllers[itemId]?.clear();
-                            //     });
-
-                            //     context.read<SearchItemBloc>().add(
-                            //       SearchItemRemoved(item: item),
-                            //     );
-
-                            //     ScaffoldMessenger.of(context).showSnackBar(
-                            //       SnackBar(
-                            //         content: Text('Removed: ${item.name}'),
-                            //         backgroundColor: Colors.red,
-                            //         duration: const Duration(milliseconds: 90),
-                            //       ),
-                            //     );
-                            //   },
-                            // ),
                           ],
                         ),
                       );
@@ -632,7 +604,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             child: ElevatedButton(
               onPressed: _addAllItemsToCart,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.amber.shade700,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   vertical: 16,
@@ -656,7 +628,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               child: Text(
                 'App Version - ${StringConstant.version}',
                 style: TextStyle(
-                  color: Colors.blue[700],
+                  color: Colors.amber.shade700,
                   fontWeight: FontWeight.w500,
                 ),
               ),

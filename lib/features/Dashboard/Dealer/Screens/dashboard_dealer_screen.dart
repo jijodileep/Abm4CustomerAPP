@@ -55,7 +55,7 @@ class DashboardDealerScreen extends StatelessWidget {
             ),
           ],
         ),
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Colors.amber.shade700,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -66,7 +66,7 @@ class DashboardDealerScreen extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.blue[700],
+              color: Colors.amber.shade700,
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withValues(alpha: 0.3),
@@ -161,7 +161,7 @@ class DashboardDealerScreen extends StatelessWidget {
                         title: 'Place Order',
                         // subtitle: 'Create new orders',
                         icon: Icons.add_shopping_cart,
-                        color: Colors.blue,
+                        color: Colors.amber.shade700,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const PlaceOrderScreen(),
@@ -173,27 +173,27 @@ class DashboardDealerScreen extends StatelessWidget {
                         title: 'My Orders',
                         // subtitle: 'Track orders',
                         icon: Icons.receipt_long,
-                        color: Colors.blue,
+                        color: Colors.amber.shade700,
                         onTap: () => _navigateToMyOrders(context),
                       ),
                       QuickAccessTile(
                         title: 'New Arrivals',
 
                         icon: Icons.fiber_new,
-                        color: Colors.blue,
+                        color: Colors.amber.shade700,
                         onTap: () => _navigateToNewArrivals(context),
                       ),
                       QuickAccessTile(
                         title: 'Inventory & Pricing',
                         icon: Icons.inventory_2,
-                        color: Colors.blue,
+                        color: Colors.amber.shade700,
                         onTap: () => _navigateToInventory(context),
                       ),
                       QuickAccessTile(
                         title: 'Promotions',
                         // subtitle: '',
                         icon: Icons.local_offer,
-                        color: Colors.blue,
+                        color: Colors.amber.shade700,
                         onTap: () => _navigateToPromotions(context),
                       ),
                     ],
@@ -212,16 +212,24 @@ class DashboardDealerScreen extends StatelessWidget {
 
           // App Version at the bottom
           Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 16, top: 8),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'App Version - ${StringConstant.version}',
-                style: TextStyle(
-                  color: Colors.blue[700],
-                  fontWeight: FontWeight.w500,
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              top: 8,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'App Version - ${StringConstant.version}',
+                  style: TextStyle(
+                    color: Colors.amber.shade700,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
+                Image.asset('assets/33.png', width: 50, height: 50),
+              ],
             ),
           ),
         ],

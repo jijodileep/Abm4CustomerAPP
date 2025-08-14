@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../models/cart_model.dart';
+import '../models/hive/cart_model.dart';
 
 class CartProvider extends ChangeNotifier {
   final Cart _cart = Cart();

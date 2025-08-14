@@ -1,7 +1,19 @@
-class CartItem {
+import 'package:hive/hive.dart';
+
+part 'cart_model.g.dart';
+
+@HiveType(typeId: 0)
+class CartItem extends HiveObject {
+  @HiveField(0)
   final String itemId;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final double price;
+
+  @HiveField(3)
   int quantity;
 
   CartItem({
@@ -10,13 +22,16 @@ class CartItem {
     required this.price,
     required this.quantity,
   });
+
   double get total => price * quantity;
+
   Map<String, dynamic> toJson() {
     return {
       'itemId': itemId,
       'name': name,
       'price': price,
       'quantity': quantity,
+      'total': total,
     };
   }
 
@@ -24,7 +39,7 @@ class CartItem {
     return CartItem(
       itemId: json['itemId'],
       name: json['name'],
-      price: json['price'],
+      price: json['price'].toDouble(),
       quantity: json['quantity'],
     );
   }

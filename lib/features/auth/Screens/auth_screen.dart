@@ -126,10 +126,10 @@ class _AuthScreenState extends State<AuthScreen>
                   controller: _tabController,
                   indicator: BoxDecoration(
                     borderRadius: BorderRadius.circular(22),
-                    color: Colors.blue.shade600,
+                    color: Colors.amber.shade700,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.blue.shade200,
+                        color: Colors.amber.shade700,
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -175,7 +175,8 @@ class _AuthScreenState extends State<AuthScreen>
                       child: Text(
                         'Contact Support',
                         style: TextStyle(
-                          color: Colors.blue.shade600,
+                          color: Colors.amber.shade700,
+
                           fontSize: 16,
                           decoration: TextDecoration.underline,
                         ),
@@ -209,16 +210,17 @@ class _AuthScreenState extends State<AuthScreen>
                 enabled: !isLoading,
                 decoration: InputDecoration(
                   labelText: 'Mobile Number / Dealer ID',
+                  // hintStyle: TextStyle(color: Colors.black),
                   prefixIcon: const Icon(Icons.person),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Colors.blue.shade600,
-                      width: 2,
-                    ),
+                    // borderSide: BorderSide(
+                    //   color: Colors.amber.shade800,
+                    //   width: 2,
+                    // ),
                   ),
                 ),
               ),
@@ -253,10 +255,10 @@ class _AuthScreenState extends State<AuthScreen>
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Colors.blue.shade600,
-                      width: 2,
-                    ),
+                    // borderSide: BorderSide(
+                    //   color: Colors.amber.shade700,
+                    //   width: 2,
+                    // ),
                   ),
                 ),
               ),
@@ -275,7 +277,7 @@ class _AuthScreenState extends State<AuthScreen>
                   child: Text(
                     'Forgot Password?',
                     style: TextStyle(
-                      color: Colors.blue.shade600,
+                      color: Colors.amber.shade700,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -292,7 +294,7 @@ class _AuthScreenState extends State<AuthScreen>
                         _handleDealerLogin();
                       },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade600,
+                  backgroundColor: Colors.amber.shade700,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -355,7 +357,7 @@ class _AuthScreenState extends State<AuthScreen>
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: Colors.blue.shade600,
+                      color: Colors.amber.shade700,
                       width: 2,
                     ),
                   ),
@@ -393,7 +395,7 @@ class _AuthScreenState extends State<AuthScreen>
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: Colors.blue.shade600,
+                      color: Colors.amber.shade700,
                       width: 2,
                     ),
                   ),
@@ -414,7 +416,7 @@ class _AuthScreenState extends State<AuthScreen>
                   child: Text(
                     'Forgot Password?',
                     style: TextStyle(
-                      color: Colors.blue.shade600,
+                      color: Colors.amber.shade800,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -431,7 +433,7 @@ class _AuthScreenState extends State<AuthScreen>
                         _handleTransporterLogin();
                       },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade600,
+                  backgroundColor: Colors.amber.shade700,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -651,9 +653,9 @@ class _AuthScreenState extends State<AuthScreen>
             children: [
               Text('Need help? Contact our support team:'),
               SizedBox(height: 10),
-              Text('📞 Phone: +91-7907452174'),
-              Text('📧 Email: support@company.com'),
-              Text('💬 Chat: Available 24/7'),
+              Text('Phone: +91-7907452174'),
+              Text('Email: support@company.com'),
+              Text('Chat: Available 24/7'),
             ],
           ),
           actions: [
