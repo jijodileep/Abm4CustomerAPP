@@ -44,9 +44,9 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber.shade700,
+        backgroundColor: const Color(0xFFCEB007),
         elevation: 2,
-        shadowColor: Colors.amber.shade700,
+        // shadowColor: Colors.amber.shade700,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () {
@@ -201,7 +201,7 @@ class _CartScreenState extends State<CartScreen> {
                               IconButton(
                                 icon: Icon(
                                   Icons.check,
-                                  color: Colors.amber.shade700,
+                                  color: Colors.grey,
                                   size: 22,
                                 ),
                                 onPressed: () {
@@ -374,7 +374,7 @@ class _CartScreenState extends State<CartScreen> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber.shade700,
+                              backgroundColor: const Color(0xFFCEB007),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -396,7 +396,7 @@ class _CartScreenState extends State<CartScreen> {
                               // Checkout function here
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber.shade700,
+                              backgroundColor: const Color(0xFFCEB007),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -427,7 +427,7 @@ class _CartScreenState extends State<CartScreen> {
                   child: Text(
                     'App Version - ${StringConstant.version}',
                     style: TextStyle(
-                      color: Colors.amber.shade700,
+                      color: Color.fromARGB(255, 95, 91, 91),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

@@ -178,9 +178,9 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.amber.shade700,
+        backgroundColor: const Color(0xFFCEB007),
         elevation: 2,
-        shadowColor: Colors.blue.withOpacity(0.3),
+        // shadowColor: Colors.blue.withOpacity(0.3),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () {
@@ -191,11 +191,11 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           children: [
             Image.asset(
               'assets/logo.png',
-              width: 50,
-              height: 25,
+              width: 70,
+              height: 35,
               fit: BoxFit.contain,
             ),
-            const SizedBox(width: 50),
+            const SizedBox(width: 30),
             const Expanded(
               child: Text(
                 'Place Order',
@@ -565,7 +565,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 child: Icon(
                                   Icons.check,
                                   color: currentQuantity > 0
-                                      ? Colors.amber.shade700
+                                      ? Colors.grey
                                       : Colors.grey,
                                   size: 20,
                                 ),
@@ -604,7 +604,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             child: ElevatedButton(
               onPressed: _addAllItemsToCart,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber.shade700,
+                backgroundColor: const Color(0xFFCEB007),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   vertical: 16,
@@ -628,7 +628,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               child: Text(
                 'App Version - ${StringConstant.version}',
                 style: TextStyle(
-                  color: Colors.amber.shade700,
+                color: Color.fromARGB(255, 95, 91, 91),
                   fontWeight: FontWeight.w500,
                 ),
               ),

@@ -1,4 +1,6 @@
 import 'package:abm4_customerapp/features/Dashboard/Dealer/Cards/Place_Order/Screen/Place_order_screen.dart';
+import 'package:abm4_customerapp/features/Splash/splash_view.dart';
+import 'package:abm4_customerapp/features/auth/Screens/auth_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,9 +55,18 @@ class DashboardDealerScreen extends StatelessWidget {
               'Dealer Dashboard',
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
+            // const SizedBox(width: 45),
+            // IconButton(
+            //   onPressed: () {
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(builder: (context) => const AuthScreen()),
+            //     );
+            //   },
+            //   icon: Icon(Icons.logout),
+            // ),
           ],
         ),
-        backgroundColor: Colors.amber.shade700,
+        backgroundColor: const Color(0xFFCEB007),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -66,7 +77,7 @@ class DashboardDealerScreen extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.amber.shade700,
+              color: const Color.fromARGB(255, 255, 255, 255),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withValues(alpha: 0.3),
@@ -96,7 +107,8 @@ class DashboardDealerScreen extends StatelessWidget {
                         Text(
                           'Welcome back,\n$dealerName',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
+                            color: Color.fromARGB(255, 95, 91, 91),
+
                             fontWeight: FontWeight.w400,
                             fontSize: 17,
                           ),
@@ -120,7 +132,7 @@ class DashboardDealerScreen extends StatelessWidget {
                       },
                       icon: const Icon(
                         Icons.notifications_outlined,
-                        color: Colors.white,
+                        color: Color.fromARGB(255, 95, 91, 91),
                         size: 28,
                       ),
                     ),
@@ -161,7 +173,7 @@ class DashboardDealerScreen extends StatelessWidget {
                         title: 'Place Order',
                         // subtitle: 'Create new orders',
                         icon: Icons.add_shopping_cart,
-                        color: Colors.amber.shade700,
+                        color: Color.fromARGB(255, 95, 91, 91),
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const PlaceOrderScreen(),
@@ -173,27 +185,27 @@ class DashboardDealerScreen extends StatelessWidget {
                         title: 'My Orders',
                         // subtitle: 'Track orders',
                         icon: Icons.receipt_long,
-                        color: Colors.amber.shade700,
+                        color: Color.fromARGB(255, 95, 91, 91),
                         onTap: () => _navigateToMyOrders(context),
                       ),
                       QuickAccessTile(
                         title: 'New Arrivals',
 
                         icon: Icons.fiber_new,
-                        color: Colors.amber.shade700,
+                        color: Color.fromARGB(255, 95, 91, 91),
                         onTap: () => _navigateToNewArrivals(context),
                       ),
                       QuickAccessTile(
-                        title: 'Inventory & Pricing',
+                        title: 'Invoices',
                         icon: Icons.inventory_2,
-                        color: Colors.amber.shade700,
+                        color: Color.fromARGB(255, 95, 91, 91),
                         onTap: () => _navigateToInventory(context),
                       ),
                       QuickAccessTile(
-                        title: 'Promotions',
+                        title: 'Schemes',
                         // subtitle: '',
                         icon: Icons.local_offer,
-                        color: Colors.amber.shade700,
+                        color: Color.fromARGB(255, 95, 91, 91),
                         onTap: () => _navigateToPromotions(context),
                       ),
                     ],
@@ -224,7 +236,8 @@ class DashboardDealerScreen extends StatelessWidget {
                 Text(
                   'App Version - ${StringConstant.version}',
                   style: TextStyle(
-                    color: Colors.amber.shade700,
+                    color: Color.fromARGB(255, 95, 91, 91),
+
                     fontWeight: FontWeight.w500,
                   ),
                 ),
