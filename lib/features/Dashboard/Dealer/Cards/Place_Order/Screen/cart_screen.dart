@@ -1,7 +1,7 @@
 import 'package:abm4customerapp/constants/string_constants.dart';
-// import 'package:clone/features/Dashboard/Dealer/Cards/Place_Order/provider/cart_provider.dart';
 import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatefulWidget {
@@ -30,15 +30,34 @@ class _CartScreenState extends State<CartScreen> {
           duration: const Duration(milliseconds: 800),
         ),
       );
+    } else if (newQuantity == 0) {
+      // Remove item if quantity is set to 0
+      cartProvider.removeItem(itemId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Item removed from cart'),
+          backgroundColor: Colors.orange,
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter a valid quantity'),
           backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 1000),
+          duration: const Duration(milliseconds: 1000),
         ),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    // Dispose all controllers
+    for (var controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -153,71 +172,124 @@ class _CartScreenState extends State<CartScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      'Qty: ${item.quantity}',
-                                      style: const TextStyle(fontSize: 12),
+                                      'Price: ₹${item.price.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        // fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                      ),
                                     ),
-                                    const SizedBox(width: 20),
+                                    const SizedBox(width: 15),
                                     Text(
-                                      '₹${item.total.toStringAsFixed(2)}',
-                                      style: const TextStyle(fontSize: 12),
+                                      'Total: ₹${item.total.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        // fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          // Quantity Input + Tick Button + Delete
+                          
+                          // Quantity Input + Tick Button + Delete - UPDATED TO MATCH PLACE ORDER SCREEN
                           Row(
                             children: [
-                              // Quantity Input Field
+                              // Quantity Input Field - UPDATED STYLE
                               Container(
-                                width: 60,
-                                height: 35,
+                                width: 50,
+                                margin: const EdgeInsets.only(right: 8),
                                 child: TextFormField(
                                   controller: _controllers[item.itemId],
                                   keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(4),
+                                  ],
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
-                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
+                                    fontSize: 14,
                                   ),
                                   decoration: InputDecoration(
+                                    hintText: 'Qty',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey[400],
+                                      fontSize: 12,
+                                    ),
+                                    filled: true,
+                                    fillColor: item.quantity > 0
+                                        ? Color(0xFFCEB007).withOpacity(0.1)
+                                        : Colors.grey[100],
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: item.quantity > 0
+                                            ? Color(0xFFCEB007).withOpacity(0.5)
+                                            : Colors.grey[300]!,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFCEB007),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: item.quantity > 0
+                                            ? Color(0xFFCEB007).withOpacity(0.5)
+                                            : Colors.grey[300]!,
+                                      ),
+                                    ),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 8,
                                       vertical: 8,
                                     ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey[300]!,
-                                        width: 1,
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 6),
 
-                              // Tick Button
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                  size: 22,
+                              // Tick Button - UPDATED STYLE
+                              Container(
+                                width: 50,
+                                margin: const EdgeInsets.only(right: 8),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: item.quantity > 0
+                                        ? Color(0xFFCEB007).withOpacity(0.1)
+                                        : Colors.grey[100],
+                                    padding: const EdgeInsets.all(8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      side: BorderSide(
+                                        color: item.quantity > 0
+                                            ? Color(0xFFCEB007).withOpacity(0.5)
+                                            : Colors.grey[300]!,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    final value = _controllers[item.itemId]!.text.trim();
+                                    _updateQuantity(
+                                      cartProvider,
+                                      item.itemId,
+                                      value,
+                                      context,
+                                    );
+                                  },
+                                  child: Icon(
+                                    Icons.check,
+                                    color: item.quantity > 0 ? Color(0xFFCEB007) : Colors.grey,
+                                    size: 20,
+                                  ),
                                 ),
-                                onPressed: () {
-                                  final value = _controllers[item.itemId]!.text
-                                      .trim();
-                                  _updateQuantity(
-                                    cartProvider,
-                                    item.itemId,
-                                    value,
-                                    context,
-                                  );
-                                },
                               ),
 
-                              const SizedBox(width: 4),
                               // Delete Button
                               IconButton(
                                 onPressed: () {

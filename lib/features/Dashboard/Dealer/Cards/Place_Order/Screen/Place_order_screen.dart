@@ -25,8 +25,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   Map<String, TextEditingController> quantityControllers =
       {}; // Controllers for quantity inputs
 
-  List<Map<String, dynamic>> savedOrders = [];
-  Map<String, SearchItem> itemsMap = {}; // Store item details for saved orders
+  Map<String, SearchItem> itemsMap = {}; // Store item details for cart
 
   @override
   void dispose() {
@@ -96,74 +95,60 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     return quantityControllers[itemId]!;
   }
 
-  void _saveOrder() {
+  void _addAllItemsToCart() {
     if (itemQuantities.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No items to save'),
-          backgroundColor: Colors.black,
-          duration: Duration(milliseconds: 90),
+          content: Text('No items selected to add to cart'),
+          backgroundColor: Colors.orange,
+          duration: Duration(milliseconds: 1000),
         ),
       );
       return;
     }
-    // Create order data
-    List<Map<String, dynamic>> orderItems = [];
-    double totalAmount = 0.0;
-    int totalQuantity = 0;
-    itemQuantities.forEach((itemId, quantity) {
-      if (itemsMap.containsKey(itemId)) {
-        final item = itemsMap[itemId]!;
-        final itemTotal = (item.currentSalesPrice ?? 0.0) * quantity;
-        totalAmount += itemTotal;
-        totalQuantity += quantity;
-        orderItems.add({
-          'itemId': itemId,
-          'name': item.name,
-          'price': item.currentSalesPrice,
-          'quantity': quantity,
-          'total': itemTotal,
-        });
-      }
-    });
-    // Add to saved orders
-    setState(() {
-      savedOrders.add({
-        'orderId': DateTime.now().millisecondsSinceEpoch.toString(),
-        'timestamp': DateTime.now(),
-        'items': orderItems,
-        'totalAmount': totalAmount,
-        'totalQuantity': totalQuantity,
-        'totalItems': orderItems.length,
-      });
-      // Clear current order
-      itemQuantities.clear();
-      for (var controller in quantityControllers.values) {
-        controller.clear();
-      }
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Order saved successfully!${orderItems.length}items(Total:₹${totalAmount.toStringAsFixed(2)} )',
-        ),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
 
-  void _removeOrder(int index) {
-    setState(() {
-      savedOrders.removeAt(index);
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    int itemsAdded = 0;
+    
+    // Add all items with quantities to cart
+    itemQuantities.forEach((itemId, quantity) {
+      if (itemsMap.containsKey(itemId) && quantity > 0) {
+        final item = itemsMap[itemId]!;
+        cartProvider.addItem(
+          itemId,
+          item.name ?? 'Unknown Item',
+          item.currentSalesPrice ?? 0.0,
+          quantity,
+        );
+        itemsAdded++;
+      }
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Order removed'),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 1),
-      ),
-    );
+
+    if (itemsAdded > 0) {
+      // Clear current selections after adding to cart
+      setState(() {
+        itemQuantities.clear();
+        for (var controller in quantityControllers.values) {
+          controller.clear();
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$itemsAdded items added to cart successfully!'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No valid items to add to cart'),
+          backgroundColor: Colors.orange,
+          duration: Duration(milliseconds: 1000),
+        ),
+      );
+    }
   }
 
   @override
@@ -495,7 +480,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                               ),
                             ),
 
-                            // Add item to Cart button
+                            // Add item to Cart button (Individual)
                             Container(
                               width: 50,
                               margin: const EdgeInsets.only(right: 8),
@@ -551,34 +536,6 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 ),
                               ),
                             ),
-
-                            // Remove Item Button
-                            IconButton(
-                              icon: const Icon(
-                                Icons.delete_outline,
-                                color: Colors.red,
-                                size: 24,
-                              ),
-                              onPressed: () {
-                                // Remove item from the list and clear its quantity
-                                setState(() {
-                                  itemQuantities.remove(itemId);
-                                  quantityControllers[itemId]?.clear();
-                                });
-
-                                context.read<SearchItemBloc>().add(
-                                  SearchItemRemoved(item: item),
-                                );
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Removed: ${item.name}'),
-                                    backgroundColor: Colors.red,
-                                    duration: const Duration(milliseconds: 90),
-                                  ),
-                                );
-                              },
-                            ),
                           ],
                         ),
                       );
@@ -604,13 +561,13 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             ),
           ),
 
-          // Save Button
+          // Add All Items to Cart Button
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             alignment: Alignment.centerRight,
             child: ElevatedButton(
-              onPressed: _saveOrder,
+              onPressed: _addAllItemsToCart,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFFCEB007),
                 foregroundColor: Colors.white,
@@ -624,7 +581,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 elevation: 2,
               ),
               child: const Text(
-                'Add Item',
+                'Add Items to Cart',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
               ),
             ),
