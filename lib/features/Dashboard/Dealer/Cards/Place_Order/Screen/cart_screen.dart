@@ -169,26 +169,54 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 4),
+                                // Row(
+                                //   children: [
+                                //     Text(
+                                //       'Price: ₹${item.price.toStringAsFixed(2)}',
+                                //       style: TextStyle(
+                                //         color: Colors.black,
+                                //         // fontWeight: FontWeight.w500,
+                                //         fontSize: 12,
+                                //       ),
+                                //     ),
+                                //     const SizedBox(width: 15),
+                                //     Text(
+                                //       'Total: ₹${item.total.toStringAsFixed(2)}',
+                                //       style: TextStyle(
+                                //         color: Colors.black,
+                                //         // fontWeight: FontWeight.w600,
+                                //         fontSize: 12,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                                 Row(
                                   children: [
                                     Text(
                                       'Price: ₹${item.price.toStringAsFixed(2)}',
                                       style: TextStyle(
                                         color: Colors.black,
-                                        // fontWeight: FontWeight.w500,
                                         fontSize: 12,
                                       ),
                                     ),
-                                    const SizedBox(width: 15),
-                                    Text(
-                                      'Total: ₹${item.total.toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        // fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                    ),
+                                    // const SizedBox(width: 15),
+                                    // Text(
+                                    //   'Total: ₹${item.total.toStringAsFixed(2)}',
+                                    //   style: TextStyle(
+                                    //     color: Colors.black,
+                                    //     fontSize: 12,
+                                    //   ),
+                                    // ),
                                   ],
+                                ),
+                                // ADD THIS BELOW THE EXISTING ROW
+                                const SizedBox(height: 4), // Add some spacing
+                                Text(
+                                  'Total: ₹${item.total.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ],
                             ),

@@ -1,10 +1,14 @@
+import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Feedback/Screen/feedback_screen.dart';
 import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/Screen/Place_order_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../constants/string_constants.dart';
+import '../../../../core/router/router_extensions.dart';
 import '../../../auth/dealer/bloc/dealer_auth_bloc.dart';
+import '../../../auth/dealer/bloc/dealer_auth_event.dart';
 import '../../../auth/dealer/bloc/dealer_auth_state.dart';
+
 class DashboardDealerScreen extends StatelessWidget {
   const DashboardDealerScreen({super.key});
 
@@ -30,6 +34,28 @@ class DashboardDealerScreen extends StatelessWidget {
     // ScaffoldMessenger.of(
     //   context,
     // ).showSnackBar(const SnackBar(content: Text('Navigate to Promotions')));
+  }
+  AlertDialog __handleLogout(BuildContext context) {
+    return (AlertDialog(
+      title: const Text('Logout'),
+      content: const Text('Are you sure you want to logout?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            // Trigger logout event
+            context.read<DealerAuthBloc>().add(DealerLogoutRequested());
+            // Navigate to auth screen
+            context.goToAuth();
+          },
+          child: const Text('Logout', style: TextStyle(color: Colors.black)),
+        ),
+      ],
+    ));
   }
 
   @override
@@ -66,6 +92,17 @@ class DashboardDealerScreen extends StatelessWidget {
         backgroundColor: const Color(0xFFCEB007),
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => __handleLogout(context),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -205,6 +242,16 @@ class DashboardDealerScreen extends StatelessWidget {
                         color: Color.fromARGB(255, 95, 91, 91),
                         onTap: () => _navigateToPromotions(context),
                       ),
+                      QuickAccessTile(
+                        title: 'Feedback',
+                        icon: Icons.feedback, // BEST CHOICE - most accurate
+                        color: Color.fromARGB(255, 95, 91, 91),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const FeedbackScreen(),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
 
@@ -247,7 +294,6 @@ class DashboardDealerScreen extends StatelessWidget {
     );
   }
 }
-
 
 class QuickAccessTile extends StatelessWidget {
   final String title;
