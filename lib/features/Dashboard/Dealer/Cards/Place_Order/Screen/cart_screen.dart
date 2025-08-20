@@ -26,7 +26,7 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Quantity updated to $newQuantity'),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           duration: const Duration(milliseconds: 800),
         ),
       );
@@ -193,7 +193,7 @@ class _CartScreenState extends State<CartScreen> {
                               ],
                             ),
                           ),
-                          
+
                           // Quantity Input + Tick Button + Delete - UPDATED TO MATCH PLACE ORDER SCREEN
                           Row(
                             children: [
@@ -274,7 +274,9 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    final value = _controllers[item.itemId]!.text.trim();
+                                    final value = _controllers[item.itemId]!
+                                        .text
+                                        .trim();
                                     _updateQuantity(
                                       cartProvider,
                                       item.itemId,
@@ -284,7 +286,9 @@ class _CartScreenState extends State<CartScreen> {
                                   },
                                   child: Icon(
                                     Icons.check,
-                                    color: item.quantity > 0 ? Color(0xFFCEB007) : Colors.grey,
+                                    color: item.quantity > 0
+                                        ? Color(0xFFCEB007)
+                                        : Colors.grey,
                                     size: 20,
                                   ),
                                 ),
@@ -306,7 +310,12 @@ class _CartScreenState extends State<CartScreen> {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child: const Text('Cancel'),
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                            ),
                                           ),
                                           TextButton(
                                             onPressed: () {
@@ -331,7 +340,7 @@ class _CartScreenState extends State<CartScreen> {
                                             child: const Text(
                                               'Remove',
                                               style: TextStyle(
-                                                color: Colors.red,
+                                                color: Colors.black,
                                               ),
                                             ),
                                           ),
