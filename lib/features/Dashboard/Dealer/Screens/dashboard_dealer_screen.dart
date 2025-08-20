@@ -21,15 +21,15 @@ class DashboardDealerScreen extends StatelessWidget {
   }
 
   void _navigateToInventory(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Navigate to Inventory & Pricing')),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('Navigate to Inventory & Pricing')),
+    // );
   }
 
   void _navigateToPromotions(BuildContext context) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Navigate to Promotions')));
+    // ScaffoldMessenger.of(
+    //   context,
+    // ).showSnackBar(const SnackBar(content: Text('Navigate to Promotions')));
   }
 
   @override

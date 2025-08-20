@@ -60,6 +60,11 @@ class _AuthScreenState extends State<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
+        final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final isKeyboardVisible = keyboardHeight > 0;
+
     return MultiBlocListener(
       listeners: [
         BlocListener<DealerAuthBloc, DealerAuthState>(
@@ -101,7 +106,7 @@ class _AuthScreenState extends State<AuthScreen>
                       // height: 120,
                       width: 150,
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 15),
                     Text(
                       'Welcome Back',
                       style: TextStyle(
@@ -170,26 +175,84 @@ class _AuthScreenState extends State<AuthScreen>
               ),
 
               // Footer - Contact Support (only show when keyboard is not visible)
-              if (MediaQuery.of(context).viewInsets.bottom == 0)
+              // if (MediaQuery.of(context).viewInsets.bottom == 0)
+              //   SafeArea(
+              //     top: false,
+              //     child: Container(
+              //       padding: const EdgeInsets.all(20),
+              //       child: TextButton(
+              //         onPressed: () {
+              //           _showContactSupport(context);
+              //         },
+              //         child: Text(
+              //           'Contact Support',
+              //           style: TextStyle(
+              //             color: Color(0xFFCEB007),
+              //             fontSize: 16,
+              //             decoration: TextDecoration.underline,
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+                            if (!isKeyboardVisible)
                 SafeArea(
                   top: false,
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    child: TextButton(
-                      onPressed: () {
-                        _showContactSupport(context);
-                      },
-                      child: Text(
-                        'Contact Support',
-                        style: TextStyle(
-                          color: Color(0xFFCEB007),
-                          fontSize: 16,
-                          decoration: TextDecoration.underline,
+                  child: Column(
+                    children: [
+                      // Contact Support Button
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            _showContactSupport(context);
+                          },
+                          child: Text(
+                            'Contact Support',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 206, 176, 7),
+                              fontSize: 16,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      // Logo/Image
+                      Container(
+                        height: screenHeight * 0.10, // Responsive height
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/33.png',
+                            width: screenWidth * 0.5, // Responsive width
+                            height: screenWidth * 0.5, // Keep aspect ratio
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: screenWidth * 0.3,
+                                height: screenWidth * 0.3,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey[600],
+                                  size: screenWidth * 0.1,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                   ),
                 ),
+
             ],
           ),
         ),
@@ -289,7 +352,7 @@ class _AuthScreenState extends State<AuthScreen>
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // Login Button
               ElevatedButton(
@@ -428,7 +491,7 @@ class _AuthScreenState extends State<AuthScreen>
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // Login Button
               ElevatedButton(
