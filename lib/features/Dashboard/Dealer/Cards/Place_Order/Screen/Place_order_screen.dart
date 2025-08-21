@@ -109,7 +109,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     int itemsAdded = 0;
-    
+
     // Add all items with quantities to cart
     itemQuantities.forEach((itemId, quantity) {
       if (itemsMap.containsKey(itemId) && quantity > 0) {
@@ -136,7 +136,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$itemsAdded items added to cart successfully!'),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -268,7 +268,10 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFFCEB007), width: 2),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFCEB007),
+                    width: 2,
+                  ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -393,8 +396,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                     Text(
                                       '₹${item.currentSalesPrice!.toStringAsFixed(2)}',
                                       style: TextStyle(
-                                        color: Colors.green[600],
-                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                        // fontWeight: FontWeight.w500,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -405,8 +408,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                       child: Text(
                                         'Total: ₹${(item.currentSalesPrice! * currentQuantity).toStringAsFixed(2)}',
                                         style: TextStyle(
-                                          color: Color(0xFFCEB007),
-                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                          // fontWeight: FontWeight.w600,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -502,25 +505,35 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                 onPressed: () {
                                   if (currentQuantity > 0) {
                                     // Add item to cart
-                                    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+                                    final cartProvider =
+                                        Provider.of<CartProvider>(
+                                          context,
+                                          listen: false,
+                                        );
                                     cartProvider.addItem(
                                       itemId,
                                       item.name ?? 'Unknown Item',
                                       item.currentSalesPrice ?? 0.0,
                                       currentQuantity,
                                     );
-                                    
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('${item.name} added to cart!'),
+                                        content: Text(
+                                          '${item.name} added to cart!',
+                                        ),
                                         backgroundColor: Colors.green,
-                                        duration: const Duration(milliseconds: 1000),
+                                        duration: const Duration(
+                                          milliseconds: 1000,
+                                        ),
                                       ),
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Please enter a quantity first'),
+                                        content: Text(
+                                          'Please enter a quantity first',
+                                        ),
                                         backgroundColor: Colors.orange,
                                         duration: Duration(milliseconds: 1000),
                                       ),
@@ -586,7 +599,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               ),
             ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.only(left: 16, bottom: 16, top: 8),
             child: Align(

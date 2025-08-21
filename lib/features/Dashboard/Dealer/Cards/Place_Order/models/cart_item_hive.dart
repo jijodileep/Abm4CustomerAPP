@@ -1,18 +1,18 @@
+import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/models/cart_model.dart';
 import 'package:hive/hive.dart';
-import 'cart_model.dart';
 
-part 'cart_item_hive.g.dart';
+part 'cart_item_hive.g.dart'; // This will be generated
 
-@HiveType(typeId: 0)
-class CartItemHive extends HiveObject {
+@HiveType(typeId: 0) // Unique typeId for each model
+class CartItemHive {
   @HiveField(0)
-  String itemId;
+  final String itemId;
 
   @HiveField(1)
-  String name;
+  final String name;
 
   @HiveField(2)
-  double price;
+  final double price;
 
   @HiveField(3)
   int quantity;
@@ -23,22 +23,26 @@ class CartItemHive extends HiveObject {
     required this.price,
     required this.quantity,
   });
+
   double get total => price * quantity;
 
-  factory CartItemHive.fromCartItem(CartItem item) {
-    return CartItemHive(
-      itemId: item.itemId,
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity,
-    );
-  }
+  // Convert to your original CartItem model
   CartItem toCartItem() {
     return CartItem(
       itemId: itemId,
       name: name,
       price: price,
       quantity: quantity,
+    );
+  }
+
+  // Convert from your original CartItem model
+  factory CartItemHive.fromCartItem(CartItem item) {
+    return CartItemHive(
+      itemId: item.itemId,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
     );
   }
 }

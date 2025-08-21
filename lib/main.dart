@@ -1,5 +1,8 @@
+import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/models/cart_item_hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
@@ -12,8 +15,17 @@ import 'theme/theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Register Hive adapters
+  Hive.registerAdapter(CartItemHiveAdapter());
+
   // Setup dependency injection
   await setupDependencyInjection();
+
+  // Initialize cart service
+  await CartHiveService.init();
 
   runApp(const MyApp());
 }
