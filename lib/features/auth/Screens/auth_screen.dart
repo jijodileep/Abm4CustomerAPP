@@ -60,7 +60,7 @@ class _AuthScreenState extends State<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
-        final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final isKeyboardVisible = keyboardHeight > 0;
@@ -99,7 +99,7 @@ class _AuthScreenState extends State<AuthScreen>
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                                        const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
                     Image.asset(
                       'assets/logo.png',
@@ -195,7 +195,7 @@ class _AuthScreenState extends State<AuthScreen>
               //       ),
               //     ),
               //   ),
-                            if (!isKeyboardVisible)
+              if (!isKeyboardVisible)
                 SafeArea(
                   top: false,
                   child: Column(
@@ -252,7 +252,6 @@ class _AuthScreenState extends State<AuthScreen>
                     ],
                   ),
                 ),
-
             ],
           ),
         ),
@@ -285,10 +284,7 @@ class _AuthScreenState extends State<AuthScreen>
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Color(0xFFCEB007),
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: Color(0xFFCEB007), width: 2),
                   ),
                 ),
               ),
@@ -323,10 +319,7 @@ class _AuthScreenState extends State<AuthScreen>
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Color(0xFFCEB007),
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: Color(0xFFCEB007), width: 2),
                   ),
                 ),
               ),
@@ -424,10 +417,7 @@ class _AuthScreenState extends State<AuthScreen>
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Color(0xFFCEB007),
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: Color(0xFFCEB007), width: 2),
                   ),
                 ),
               ),
@@ -462,10 +452,7 @@ class _AuthScreenState extends State<AuthScreen>
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Color(0xFFCEB007),
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: Color(0xFFCEB007), width: 2),
                   ),
                 ),
               ),

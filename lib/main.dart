@@ -1,3 +1,4 @@
+import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/Services/cart_hive_service.dart';
 import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/models/cart_item_hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,11 +22,11 @@ void main() async {
   // Register Hive adapters
   Hive.registerAdapter(CartItemHiveAdapter());
 
-  // Setup dependency injection
-  await setupDependencyInjection();
-
   // Initialize cart service
   await CartHiveService.init();
+
+  // Setup dependency injection
+  await setupDependencyInjection();
 
   runApp(const MyApp());
 }

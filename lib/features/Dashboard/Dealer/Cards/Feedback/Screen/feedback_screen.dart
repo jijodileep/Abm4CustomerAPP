@@ -1,3 +1,4 @@
+import 'package:abm4customerapp/constants/string_constants.dart';
 import 'package:flutter/material.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -234,6 +235,28 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 'Prefer to contact us directly?\nEmail: support@abm.com\nPhone: +91-XXXXX-XXXXX',
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 16,
+                  top: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'App Version - ${StringConstant.version}',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 95, 91, 91),
+
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Image.asset('assets/33.png', width: 100, height: 100),
+                  ],
+                ),
               ),
             ],
           ),

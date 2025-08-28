@@ -81,7 +81,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 ? '${item.name}: Removed from order'
                 : '${item.name}: Quantity $quantity',
           ),
-          backgroundColor: quantity == 0 ? Colors.orange : Colors.green,
+          backgroundColor: quantity == 0 ? Colors.orange : Colors.black,
           duration: const Duration(milliseconds: 800),
         ),
       );
@@ -522,7 +522,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         content: Text(
                                           '${item.name} added to cart!',
                                         ),
-                                        backgroundColor: Colors.green,
+                                        backgroundColor: Colors.black,
                                         duration: const Duration(
                                           milliseconds: 1000,
                                         ),
@@ -534,7 +534,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                         content: Text(
                                           'Please enter a quantity first',
                                         ),
-                                        backgroundColor: Colors.orange,
+                                        backgroundColor: Colors.black,
                                         duration: Duration(milliseconds: 1000),
                                       ),
                                     );
@@ -601,16 +601,25 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           ),
 
           Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 16, top: 8),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'App Version - ${StringConstant.version}',
-                style: TextStyle(
-                  color: Color(0xFFCEB007),
-                  fontWeight: FontWeight.w500,
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              top: 8,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'App Version - ${StringConstant.version}',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 95, 91, 91),
+
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
+                Image.asset('assets/33.png', width: 100, height: 50),
+              ],
             ),
           ),
         ],

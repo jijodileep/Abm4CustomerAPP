@@ -285,7 +285,7 @@ class DashboardDealerScreen extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Image.asset('assets/33.png', width: 50, height: 50),
+                Image.asset('assets/33.png', width: 100, height: 50),
               ],
             ),
           ),

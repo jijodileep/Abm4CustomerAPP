@@ -30,7 +30,7 @@ class Helpers {
 
   // Show success snackbar
   static void showSuccessSnackBar(BuildContext context, String message) {
-    showSnackBar(context, message, backgroundColor: Colors.green.shade600);
+    showSnackBar(context, message, backgroundColor: Colors.black);
   }
 
   // Show info snackbar

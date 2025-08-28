@@ -30,9 +30,9 @@ class AppColors {
   static const Color textOnSurface = Color(0xFF424242); // Grey shade 800
 
   // Status Colors
-  static const Color success = Color(0xFF4CAF50); // Green shade 600
-  static const Color successLight = Color(0xFF81C784); // Green shade 300
-  static const Color successDark = Color(0xFF2E7D32); // Green shade 800
+  static const Color success = Colors.black; // Black shade 600
+  static const Color successLight = Colors.black; // Black shade 300
+  static const Color successDark = Colors.black; // Black shade 800
 
   static const Color error = Color(0xFFE53935); // Red shade 600
   static const Color errorLight = Color(0xFFEF5350); // Red shade 400

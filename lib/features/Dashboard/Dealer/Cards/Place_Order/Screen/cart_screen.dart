@@ -63,6 +63,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Color(0xFFCEB007),
         elevation: 2,
@@ -358,7 +359,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   content: Text(
                                                     '${item.name} removed from cart',
                                                   ),
-                                                  backgroundColor: Colors.red,
+                                                  backgroundColor: Colors.black,
                                                   duration: const Duration(
                                                     milliseconds: 1000,
                                                   ),
