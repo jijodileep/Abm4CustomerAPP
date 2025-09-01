@@ -706,11 +706,11 @@ class _AuthScreenState extends State<AuthScreen>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Need help? Contact our support team:'),
+              // Text('Need help? Contact our support team:'),
               SizedBox(height: 10),
-              Text('📞 Phone: +91-7907452174'),
-              Text('📧 Email: support@company.com'),
-              Text('💬 Chat: Available 24/7'),
+              Text('Phone: +91-7907452174'),
+              Text('Email: support@company.com'),
+              // Text('Chat: Available 24/7'),
             ],
           ),
           actions: [

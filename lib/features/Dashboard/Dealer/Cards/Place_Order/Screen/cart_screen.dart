@@ -3,6 +3,8 @@ import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/prov
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -13,6 +15,129 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final Map<String, TextEditingController> _controllers = {};
+  bool _isProcessingCheckout = false;
+
+  // API call method for checkout
+  Future<void> _proceedToCheckout(CartProvider cartProvider) async {
+    if (_isProcessingCheckout) return;
+
+    setState(() {
+      _isProcessingCheckout = true;
+    });
+
+    try {
+      // Prepare the mobile order items from cart
+      List<Map<String, dynamic>> mobileOrderItems = cartProvider.items.map((
+        item,
+      ) {
+        return {
+          "id": 0,
+          "referenceId": 0,
+          "referenceType": "string",
+          "companyId": 0,
+          "mobileOrderId": 0,
+          "itemId": int.tryParse(item.itemId) ?? 0,
+          "itemQuantity": item.quantity,
+          "completedQuantity": 0,
+        };
+      }).toList();
+
+      // Prepare the request body
+      Map<String, dynamic> requestBody = {
+        "id": 0,
+        "referenceId": 0,
+        "referenceType": "string",
+        "companyId": 0,
+        "billTypeId": 0,
+        "increment": 0,
+        "invoice": "string",
+        "customerId": 38590,
+        "mobileOrderStatusId": 1,
+        "notes": "Notes",
+        "mobileOrderItem": mobileOrderItems,
+      };
+
+      // Make the API call
+      final response = await http.post(
+        Uri.parse(
+          'http://devapi.abm4trades.com/api/MobileOrder/NewMobileOrder',
+        ),
+        headers: {
+          'accept': '*/*',
+          'Authorization': 'Bearer 659476889604ib26is5ods8ah9l',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData['success'] == true) {
+          // Success - clear cart and show success message
+          cartProvider.clearCart();
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  responseData['message'] ?? 'Order placed successfully!',
+                ),
+                backgroundColor: Colors.green,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+
+            // Navigate back or to order confirmation screen
+            Navigator.of(context).pop();
+          }
+        } else {
+          // API returned success: false
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  responseData['message'] ?? 'Failed to place order',
+                ),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+        }
+      } else {
+        // HTTP error
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Failed to place order. Status: ${response.statusCode}',
+              ),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Network or other error
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error placing order: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessingCheckout = false;
+        });
+      }
+    }
+  }
 
   void _updateQuantity(
     CartProvider cartProvider,
@@ -503,11 +628,13 @@ class _CartScreenState extends State<CartScreen> {
                         Expanded(
                           flex: 2,
                           child: ElevatedButton(
-                            onPressed: () {
-                              // Checkout function here
-                            },
+                            onPressed: _isProcessingCheckout
+                                ? null
+                                : () => _proceedToCheckout(cartProvider),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFCEB007),
+                              backgroundColor: _isProcessingCheckout
+                                  ? Colors.grey
+                                  : Color(0xFFCEB007),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -515,13 +642,38 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               elevation: 2,
                             ),
-                            child: const Text(
-                              'Proceed to Checkout',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                            child: _isProcessingCheckout
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Text(
+                                        'Processing...',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : const Text(
+                                    'Proceed to Checkout',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],

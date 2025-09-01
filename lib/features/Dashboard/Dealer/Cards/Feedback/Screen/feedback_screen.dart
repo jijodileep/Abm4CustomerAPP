@@ -243,8 +243,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   bottom: 16,
                   top: 8,
                 ),
+
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                   children: [
                     Text(
                       'App Version - ${StringConstant.version}',
