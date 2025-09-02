@@ -1,6 +1,8 @@
-import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Feedback/Screen/feedback_screen.dart';
+// import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Feedback/Screen/feedback_screen.dart';
+import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Feedback/screens/feedback_screen.dart';
 import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Place_Order/Screen/Place_order_screen.dart';
-import 'package:abm4customerapp/features/Dashboard/Dealer/My_Orders/screens/my_orders_screen.dart';
+import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/Stocks/screens/stock_screen.dart';
+import 'package:abm4customerapp/features/Dashboard/Dealer/Cards/My_Orders/screens/my_orders_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +19,12 @@ class DashboardDealerScreen extends StatelessWidget {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (context) => const MyOrdersScreen()));
+  }
+
+  void _navigateToStocks(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const StockScreen()));
   }
 
   void _navigateToNewArrivals(BuildContext context) {
@@ -243,6 +251,14 @@ class DashboardDealerScreen extends StatelessWidget {
                         color: Color.fromARGB(255, 95, 91, 91),
                         onTap: () => _navigateToPromotions(context),
                       ),
+                      QuickAccessTile(
+                        title: 'Stocks',
+                        // subtitle: '',
+                        icon: Icons.local_offer,
+                        color: Color.fromARGB(255, 95, 91, 91),
+                        onTap: () => _navigateToStocks(context),
+                      ),
+
                       QuickAccessTile(
                         title: 'Feedback',
                         icon: Icons.feedback, // BEST CHOICE - most accurate
