@@ -6,11 +6,12 @@ import 'stock_state.dart';
 class StockBloc extends Bloc<StockEvent, StockState> {
   final StockService stockService;
 
-  StockBloc({StockService? stockService}) 
-      : stockService = stockService ?? StockService(),
-        super(const StockInitial()) {
+  StockBloc({StockService? stockService})
+    : stockService = stockService ?? StockService(),
+      super(const StockInitial()) {
     on<FetchStockDetails>(_onFetchStockDetails);
     on<ClearStockDetails>(_onClearStockDetails);
+    on<FetchStockByName>(_onFetchStockByName);
   }
 
   Future<void> _onFetchStockDetails(
@@ -20,8 +21,10 @@ class StockBloc extends Bloc<StockEvent, StockState> {
     emit(const StockLoading());
 
     try {
-      final stockResponse = await StockService.getItemStockDetails(event.itemId);
-      
+      final stockResponse = await StockService.getItemStockDetails(
+        event.itemId,
+      );
+
       if (stockResponse != null) {
         if (stockResponse.success && stockResponse.stockDetails.isNotEmpty) {
           emit(StockLoaded(stockResponse));
@@ -36,10 +39,32 @@ class StockBloc extends Bloc<StockEvent, StockState> {
     }
   }
 
-  void _onClearStockDetails(
-    ClearStockDetails event,
-    Emitter<StockState> emit,
-  ) {
+  void _onClearStockDetails(ClearStockDetails event, Emitter<StockState> emit) {
     emit(const StockInitial());
+  }
+
+  Future<void> _onFetchStockByName(
+    FetchStockByName event,
+    Emitter<StockState> emit,
+  ) async {
+    emit(const StockLoading());
+
+    try {
+      final stockResponse = await StockService.getItemStockDetailsByName(
+        event.itemName,
+      );
+
+      if (stockResponse != null) {
+        if (stockResponse.success && stockResponse.stockDetails.isNotEmpty) {
+          emit(StockLoaded(stockResponse));
+        } else {
+          emit(const StockEmpty());
+        }
+      } else {
+        emit(const StockError('No items found with that name'));
+      }
+    } catch (e) {
+      emit(StockError('Error: ${e.toString()}'));
+    }
   }
 }
